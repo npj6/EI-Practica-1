@@ -1,1 +1,2 @@
-# EI-Practica-1
+# Explotacion de la Informacion
+## Practica 1: Tokenizador
