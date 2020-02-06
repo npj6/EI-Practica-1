@@ -17,7 +17,7 @@ $(LIBDIR)/%.o: $(LIBDIR)/%.cpp $(INCLUDEDIR)/%.h
 	$(CC) $(OPTIONS) $(DEBUG) -c -I$(INCLUDEDIR) -o $@ $<
 
 clean:
-	rm -f $(OBJ)
+	rm -f $(OBJ) corrigeUno.res practica1 memory time src/main.cpp
 
 memory: src/test/memory.cpp
 	g++ src/test/memory.cpp -o memory

@@ -1,6 +1,13 @@
 #ifndef TOKENIZADOR_H
   #define TOKENIZADOR_H
 
+  #include <fstream>
+  #include <string>
+  #include <list>
+
+  using namespace std;
+
+
   class Tokenizador {
       friend ostream& operator<<(ostream&, const Tokenizador&);
       /* cout << "DELIMITADORES: " << delimiters
@@ -82,6 +89,11 @@
       string DelimitadoresPalabra() const;
       //Devuelve "delimiters"
 
+      void AnyadirDelimitadoresPalabra(const string& nuevoDelimiters);
+      /* Añade al final de delimiters los nuevos delimitadores que aparezcan en nuevoDelimiters (no se
+       * almacenaran caracteres repetidos)
+       */
+
       void CasosEspeciales(const bool& nuevoCasosEspeciales);
       //Cambia la variable privada "casosEspeciales"
 
@@ -98,6 +110,8 @@
       // Devuelve el contenido de la variable privada "pasarAminuscSinAcentos"
 
     private:
+      static void normalizarDelimitadores(string& delims);
+
       string delimiters;
       /* Delimitadores de terminos. Aunque se modifique la forma de almacenamiento interna para
        * mejorar la eficiencia este campo debe permanecer para indicar el orden en que se
@@ -111,5 +125,7 @@
 
       bool pasarAminuscSinAcentos;
       // Si true pasara el token a minusculas y quitara acentos antes de realizar la tokenizacion
+  };
+
 #endif
 
