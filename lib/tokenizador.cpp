@@ -41,27 +41,47 @@ Tokenizador& Tokenizador::operator=(const Tokenizador& tokenizador) {
 
 /*MAIN FUNCTIONS*/
 
+/*
+string to output<T> (devolver output)
+*/
+
 //string to list
 void Tokenizador::Tokenizar(const string& str, list<string>& tokens) const {
-
+ /*
+    depende de string to ouput<T>
+    tokens = output<list>.representacion
+ */
 }
 
 //file to file (custom name)
 bool Tokenizador::Tokenizar(const string& i, const string& f) const {
-  return false;
-}
-//file to file (auto name)
-bool Tokenizador::Tokenizar(const string& i) const {
+
+  /* 
+     depente de string to output<T>
+     file.write(output<string>.representacion)
+  */
   return false;
 }
 
+//file to file (auto name)
+bool Tokenizador::Tokenizar(const string& i) const {
+  /*depende de Tokenizar custom name*/
+  return false;
+}
+
+/*escribir todos los archivos de golpe vs escribir dentro del bucle para aprovechar ¿pipelining, parallel, idfk?*/
+/*TokenizarIndex, recibe una list<string> de archivos*/
+/*podria depender de tokenizar autoname si la implementacion es escribir cada fichero en cuanto se acabe*/
+
 //files to files (from index)
 bool Tokenizador::TokenizarListaFicheros(const string &i) const {
+  /*depende de TokenizarIndex*/
   return false;
 }
 
 //files to files (from folder)
 bool Tokenizador::TokenizarDirectorio(const string& i) const {
+  /*crea un indice y lo envia a TokenizarIndex*/
   return false;
 }
 
