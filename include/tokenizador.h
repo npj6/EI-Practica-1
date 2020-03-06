@@ -4,6 +4,8 @@
   #include <fstream>
   #include <string>
   #include <list>
+  //Output classes definition
+  #include "output.h"
 
   using namespace std;
 

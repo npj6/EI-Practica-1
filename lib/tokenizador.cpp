@@ -1,4 +1,6 @@
 #include "tokenizador.h"
+//output classes code
+#include "output.cpp"
 
 using namespace std;
 
