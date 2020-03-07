@@ -39,7 +39,7 @@
       // Pone delimiters=""
 
       Tokenizador& operator=(const Tokenizador&);
-
+      void Tokenizar(const string& str, TokenAccumulator &ta) const;
       void Tokenizar(const string& str, list<string>& tokens) const;
       /* Tokeniza str devolviendo el resultado en tokens.
        * La lista tokens se vaciará antes de almacenar el resultado de la tokenizacion
@@ -130,4 +130,3 @@
   };
 
 #endif
-

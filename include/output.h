@@ -11,31 +11,19 @@
       virtual void addToken(string token) = 0;
   };
 
+  //overkill cuando podría ser solo OutputString & OutputList, pero:
+  //  1. Los templates no te pierden eficiencia, el dynamic binding si
+  //  2. Me molestaba repetir el codigo de getRepresentation
+  //  3. Me emperré y quería aprender algo nuevo sobre c++
   template<class T>
-    class Output : TokenAccumulator {
+    class Output : public TokenAccumulator {
       private:
-	T output;
+	       T output;
       public:
-	T getRepresentation(void) {
-	  return output;
-	}
+	       T getRepresentation(void) { return output; }
+         void addToken(string token);
     };
 
-  template<>
-  class Output<string> {
-    public:
-      void addToken(string token) {
-	output += "\n" + token;
-      }
-  };
-
-  template<>
-  class Output<list<string> > {
-    public:
-      void addToken(string token) {
-	output.push_back(token);
-      }
-  };
 
 /*
 

@@ -44,21 +44,24 @@ Tokenizador& Tokenizador::operator=(const Tokenizador& tokenizador) {
 /*MAIN FUNCTIONS*/
 
 /*
-string to output<T> (devolver output)
+string to output<T> (devolver output por referencia)
 */
+
+void Tokenizador::Tokenizar(const string& str, TokenAccumulator &ta) const {
+
+}
 
 //string to list
 void Tokenizador::Tokenizar(const string& str, list<string>& tokens) const {
- /*
-    depende de string to ouput<T>
-    tokens = output<list>.representacion
- */
+    Output<list<string> >* os = new Output<list<string> >();
+    Tokenizar(str, *os);
+    tokens = os->getRepresentation();
 }
 
 //file to file (custom name)
 bool Tokenizador::Tokenizar(const string& i, const string& f) const {
 
-  /* 
+  /*
      depente de string to output<T>
      file.write(output<string>.representacion)
   */
