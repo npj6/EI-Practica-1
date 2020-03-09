@@ -38,6 +38,9 @@
       ~Tokenizador();
       // Pone delimiters=""
 
+
+      string& normalizarTexto(const string& texto) const;
+
       Tokenizador& operator=(const Tokenizador&);
       void Tokenizar(const string& str, TokenAccumulator &ta) const;
       void Tokenizar(const string& str, list<string>& tokens) const;
@@ -113,6 +116,8 @@
 
     private:
       static void normalizarDelimitadores(string& delims);
+
+      string s 
 
       string delimiters;
       /* Delimitadores de terminos. Aunque se modifique la forma de almacenamiento interna para

@@ -48,7 +48,18 @@ string to output<T> (devolver output por referencia)
 */
 
 void Tokenizador::Tokenizar(const string& str, TokenAccumulator &ta) const {
-
+  string texto = normalizarTexto(str);
+  string token = "";
+  for(int i=0; i<texto.size(); i++) {
+    for(int d=0; d<delimiters.size(); d++) {
+      if(texto[i]==delimiters[d]) {
+        ta.addToken(token);
+        token = "";
+      } else {
+        token.push_back(texto[i]);
+      }
+    }
+  }
 }
 
 //string to list
@@ -120,6 +131,11 @@ void Tokenizador::PasarAminuscSinAcentos(const bool& nuevoPasarAminuscSinAcentos
 
 bool Tokenizador::PasarAminuscSinAcentos() {
   return pasarAminuscSinAcentos;
+}
+
+void Tokenizador::normalizarTexto(const string& texto) const {
+  string* t = new string("");
+  return &t;
 }
 
 void Tokenizador::normalizarDelimitadores(string& delims){
