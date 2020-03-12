@@ -2,6 +2,7 @@
   #define TOKENIZADOR_H
 
   #include <fstream>
+  #include <iostream>
   #include <string>
   #include <list>
   //Output classes definition
@@ -39,7 +40,7 @@
       // Pone delimiters=""
 
 
-      string& normalizarTexto(const string& texto) const;
+      void normalizarTexto(const string& str, string &texto) const;
 
       Tokenizador& operator=(const Tokenizador&);
       void Tokenizar(const string& str, TokenAccumulator &ta) const;
@@ -116,8 +117,6 @@
 
     private:
       static void normalizarDelimitadores(string& delims);
-
-      string s 
 
       string delimiters;
       /* Delimitadores de terminos. Aunque se modifique la forma de almacenamiento interna para

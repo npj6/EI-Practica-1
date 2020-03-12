@@ -47,36 +47,62 @@ Tokenizador& Tokenizador::operator=(const Tokenizador& tokenizador) {
 string to output<T> (devolver output por referencia)
 */
 
+
+//crea otro visitor para el input, generaliza un "nextCharacter", haz que el visitor decida si se quitan caracteres especiales o no.
+//el inputVisitor puede ser un archivo o un string
+//considera un TokenAccumulator de file, comprueba si es mas lento que TokenAccumulator de string y escribirlo todo de una pasada.
+//ten cuidado con las signatures de las funciones
+
 void Tokenizador::Tokenizar(const string& str, TokenAccumulator &ta) const {
-  string texto = normalizarTexto(str);
+  string texto;
+  normalizarTexto(str, texto);
   string token = "";
   for(int i=0; i<texto.size(); i++) {
-    for(int d=0; d<delimiters.size(); d++) {
+    bool isDelimiter = false;
+    for(int d=0; d<delimiters.size() && !isDelimiter; d++) {
       if(texto[i]==delimiters[d]) {
-        ta.addToken(token);
-        token = "";
-      } else {
-        token.push_back(texto[i]);
+        if(token.size() != 0) {
+          ta.addToken(token);
+          token = "";
+        }
+        isDelimiter = true;
+        break;
       }
+    }
+    if(!isDelimiter) {
+      token.push_back(texto[i]);
     }
   }
 }
 
 //string to list
 void Tokenizador::Tokenizar(const string& str, list<string>& tokens) const {
-    Output<list<string> >* os = new Output<list<string> >();
-    Tokenizar(str, *os);
-    tokens = os->getRepresentation();
+  Output<list<string> >* os = new Output<list<string> >();
+  Tokenizar(str, *os);
+  tokens = os->getRepresentation();
+  delete os;
 }
 
 //file to file (custom name)
 bool Tokenizador::Tokenizar(const string& i, const string& f) const {
-
+  ifstream input_file(i);
+  if (!inputfile.is_open()) {
+    //fallo al abrir input
+    return false;
+  }
+  input_file.close();
+  
   /*
      depente de string to output<T>
      file.write(output<string>.representacion)
   */
-  return false;
+  ofstream output_file(f);
+  if(!output_file.is_open()) {
+    //fallo al abrir output
+    return false;
+  }
+  output_file.close();
+  return true;
 }
 
 //file to file (auto name)
@@ -133,9 +159,8 @@ bool Tokenizador::PasarAminuscSinAcentos() {
   return pasarAminuscSinAcentos;
 }
 
-void Tokenizador::normalizarTexto(const string& texto) const {
-  string* t = new string("");
-  return &t;
+void Tokenizador::normalizarTexto(const string& str, string &salida) const {
+  salida = str;
 }
 
 void Tokenizador::normalizarDelimitadores(string& delims){
