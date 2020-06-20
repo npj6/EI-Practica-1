@@ -43,7 +43,16 @@ Tokenizador& Tokenizador::operator=(const Tokenizador& tokenizador) {
 
 //string to list
 void Tokenizador::Tokenizar(const string& str, list<string>& tokens) const {
+  string::size_type lastPos, pos = 0;
 
+  lastPos = str.find_first_not_of(delimiters, pos);
+  pos = str.find_first_of(delimiters, lastPos);
+
+  while(string::npos != pos || string::npos != lastPos) {
+    tokens.push_back(str.substr(lastPos, pos - lastPos));
+    lastPos = str.find_first_not_of(delimiters, pos);
+    pos = str.find_first_of(delimiters, lastPos);
+  }
 }
 
 //file to file (custom name)

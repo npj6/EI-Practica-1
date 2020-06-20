@@ -6,12 +6,12 @@
 #################################################
 # SE EJECUTA DESDE EL DIRECTORIO QUE CONTIENE src lib include (p.ej. ./corrigeAlumno.sh desde el directorio que contiene src lib include)
 #   DICHO DIRECTORIO NO CONTENDRA NINGUN ARCHIVO $EJE (p.ej. ya que en este fichero EJE=practica1, en ese directorio no podra haber ningun fichero que se llame "practica1")
-#   DICHO DIRECTORIO CONTENDRA UN FICHERO makefile QUE GENERE EL EJECUTABLE $EJE CUYO PROGRAMA PRINCIPAL SERA $MAIN (p.ej. ya que en este fichero EJE=practica1, el makefile ha de crear un ejecutable de nombre "practica1", como el makefile mostrado en la siguiente seccion ) 
+#   DICHO DIRECTORIO CONTENDRA UN FICHERO makefile QUE GENERE EL EJECUTABLE $EJE CUYO PROGRAMA PRINCIPAL SERA $MAIN (p.ej. ya que en este fichero EJE=practica1, el makefile ha de crear un ejecutable de nombre "practica1", como el makefile mostrado en la siguiente seccion )
 # EL SUBDIRECTORIO src:
-#   * CONTENDRA LOS FICHEROS DE PRUEBA: *.cpp 
+#   * CONTENDRA LOS FICHEROS DE PRUEBA: *.cpp
 #   * SUS SALIDAS CORRESPONDIENTES *.cpp.sal
 #   * NO CONTENDRA NINGUN ARCHIVO $MAIN (el directorio src no debe contener ningun archivo con nombre "main.cpp" ya que MAIN=main.cpp)
-# 
+#
 # corrigeAlumno
 
 #################################################
@@ -143,7 +143,7 @@ function corrige()
 # La instruccion sed elimina los espacios en blanco iniciales
   VAR=$(grep OK $NOMTMPOK | wc -w | sed -e '1,$ s/^[ ]*//')
   echo "# CORR. OKs:      $VAR"
-  echo -n "$VAR:" >> corrigeUno.res	
+  echo -n "$VAR:" >> corrigeUno.res
   VAR=$(grep REG $NOMTMPOK | wc -w | sed -e '1,$ s/^[ ]*//')
   echo "# CORR. REGs:     $VAR"
   echo -n "$VAR:" >> corrigeUno.res
@@ -174,6 +174,6 @@ function corrige()
 
 
 
-
+  rm $DIROK1/$MAIN
   corrige $DIROK1 $MAKE1
-
+  rm $DIROK1/$MAIN
