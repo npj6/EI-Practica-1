@@ -3,7 +3,11 @@
 
   #include <fstream>
   #include <string>
+  #include <iostream>
   #include <list>
+
+  #include <sys/stat.h>
+
 
   using namespace std;
 
@@ -58,7 +62,7 @@
        * false en caso contrario enviando a cerr el mensaje correspondiente (p.ej. que no exista el
        * archivo i)
        */
-
+       
       bool TokenizarListaFicheros(const string &i) const;
       /* Tokeniza el fichero i que contiene un nombre de fichero por linea guardando la salida en
        * ficheros (uno por cada linea de i) cuyo nombre sera el leido en i añadiendole la
@@ -128,4 +132,3 @@
   };
 
 #endif
-

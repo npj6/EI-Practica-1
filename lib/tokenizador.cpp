@@ -43,6 +43,7 @@ Tokenizador& Tokenizador::operator=(const Tokenizador& tokenizador) {
 
 //string to list
 void Tokenizador::Tokenizar(const string& str, list<string>& tokens) const {
+  tokens.erase(tokens.begin(), tokens.end());
   string::size_type lastPos, pos = 0;
 
   lastPos = str.find_first_not_of(delimiters, pos);
@@ -57,21 +58,89 @@ void Tokenizador::Tokenizar(const string& str, list<string>& tokens) const {
 
 //file to file (custom name)
 bool Tokenizador::Tokenizar(const string& i, const string& f) const {
-  return false;
+  ifstream input; ofstream output;
+  string cadena;
+  list<string> tokens;
+
+  struct stat dir;
+  int err=stat(i.c_str(), &dir);
+  if(S_ISDIR(dir.st_mode)) {
+    cerr << "ERROR: " << i << " es una carpeta" << endl;
+    return false;
+  }
+  input.open(i.c_str());
+  if(!input) {
+    cerr << "ERROR: No existe el archivo " << i << endl;
+    return false;
+  } else {
+    while(!input.eof()) {
+      cadena="";
+      getline(input, cadena);
+      if(cadena.length() != 0) {
+        list<string> tokensTEMP;
+        Tokenizar(cadena, tokensTEMP);
+        tokens.splice(tokens.end(), tokensTEMP);
+      }
+    }
+  }
+  input.close();
+
+  output.open(f.c_str());
+  for(auto itS=tokens.begin(); itS!=tokens.end(); itS++) {
+    output << (*itS) << endl;
+  }
+  output.close();
+  return true;
 }
 //file to file (auto name)
 bool Tokenizador::Tokenizar(const string& i) const {
-  return false;
+  return Tokenizar(i, i+".tk");
 }
 
 //files to files (from index)
 bool Tokenizador::TokenizarListaFicheros(const string &i) const {
-  return false;
+  ifstream input;
+  string cadena;
+  bool output = true;
+
+  struct stat dir;
+  int err=stat(i.c_str(), &dir);
+  if(S_ISDIR(dir.st_mode)) {
+    cerr << "ERROR: " << i << " es una carpeta" << endl;
+    return false;
+  }
+  input.open(i.c_str());
+  if(!input) {
+    cerr << "ERROR: No existe el archivo: " << i << endl;
+    return false;
+  } else {
+    while(!input.eof()) {
+      cadena="";
+      getline(input, cadena);
+      if(cadena.length() != 0) {
+        output = Tokenizar(cadena) || output;
+      }
+    }
+  }
+  input.close();
+
+  return output;
 }
 
 //files to files (from folder)
 bool Tokenizador::TokenizarDirectorio(const string& i) const {
-  return false;
+  struct stat dir;
+  int err=stat(i.c_str(), &dir);
+  if(err==-1 || !S_ISDIR(dir.st_mode)) {
+    return false;
+  } else {
+    //-follow is deprecated according to SS64
+    string cmd = "find -L "+i+" -type f |sort > .lista_fich";
+    system(cmd.c_str());
+    bool output = TokenizarListaFicheros(".lista_fich");
+    system("rm .lista_fich");
+    return output;
+  }
 }
 
 
