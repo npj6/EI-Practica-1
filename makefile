@@ -18,6 +18,7 @@ $(LIBDIR)/%.o: $(LIBDIR)/%.cpp $(INCLUDEDIR)/%.h
 
 clean:
 	rm -f $(OBJ) corrigeUno.res practica1 memory time src/main.cpp
+	find . -type f -name '*.tk' -delete
 
 memory: src/test/memory.cpp
 	g++ src/test/memory.cpp -o memory
