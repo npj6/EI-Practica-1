@@ -50,15 +50,15 @@ void Tokenizador::addCharToWordAccentsLower(string &word, const char &c) const {
   char newC;
   switch(c) {
     case (char) 192: case (char) 193: case (char) 224: case (char) 225:
-      newC = 'a';
+      newC = 'a'; break;
     case (char) 200: case (char) 201: case (char) 232: case (char) 233:
-      newC = 'e';
+      newC = 'e'; break;
     case (char) 204: case (char) 205: case (char) 236: case (char) 237:
-      newC = 'i';
+      newC = 'i'; break;
     case (char) 210: case (char) 211: case (char) 242: case (char) 243:
-      newC = 'o';
+      newC = 'o'; break;
     case (char) 217: case (char) 218: case (char) 249: case (char) 250:
-      newC = 'u';
+      newC = 'u'; break;
     default:
       if ('A' <= c && c <= 'Z' || (char) 192 <= c && c <= (char) 222) {
         newC = c + ('a' - 'A');
@@ -72,30 +72,23 @@ void Tokenizador::addCharToWordAccentsLower(string &word, const char &c) const {
 //string to list
 void Tokenizador::Tokenizar(const string& str, list<string>& tokens) const {
   tokens.erase(tokens.begin(), tokens.end());
+
   //IDEA: usar idx para reordenar los separadores segun aparecen
-  string word;
-  const char *pointerToTheEnd = &*--str.end();
+  string word; bool esDelim;
+
   for(const char &c : str) {
-    bool esDelim = false;
-    for(const char &d : delimiters) {
-      //delimitador encontrado
-      if (c==d) {
-        esDelim = true;
-        break;
-      }
-    }
-    if(!esDelim) {
-      //caracter encontrado
+    esDelim = false;
+    for(const char &d : delimiters) { if (c==d) { esDelim = true; break; } }
+    if(esDelim) {
+      if(0 < word.size()) { tokens.push_back(word); word.clear(); }
+    } else {
       (this->*addCharToWord)(word, c);
     }
-    if(esDelim || &c == pointerToTheEnd) {
-      if(0 < word.size()) {
-        //guarda palabra
-        tokens.push_back(word);
-        //borra string
-        word.clear();
-      }
-    }
+  }
+
+  //añade la ultima palabra
+  if(0 < word.size()) {
+    tokens.push_back(word);
   }
 }
 
