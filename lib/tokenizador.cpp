@@ -39,6 +39,27 @@ Tokenizador& Tokenizador::operator=(const Tokenizador& tokenizador) {
   return *this;
 }
 
+char minusculaAcentos (const char &c) {
+  switch(c) {
+    case (char) 192: case (char) 193: case (char) 224: case (char) 225:
+      return 'a';
+    case (char) 200: case (char) 201: case (char) 232: case (char) 233:
+      return 'e';
+    case (char) 204: case (char) 205: case (char) 236: case (char) 237:
+      return 'i';
+    case (char) 210: case (char) 211: case (char) 242: case (char) 243:
+      return 'o';
+    case (char) 217: case (char) 218: case (char) 249: case (char) 250:
+      return 'u';
+    default:
+      if ('A' <= c && c <= 'Z' || (char) 192 <= c && c <= (char) 222) {
+        return c + ('a' - 'A');
+      } else {
+        return c;
+      }
+    }
+}
+
 /*MAIN FUNCTIONS*/
 
 //string to list
@@ -59,24 +80,7 @@ void Tokenizador::Tokenizar(const string& str, list<string>& tokens) const {
     if(!esDelim) {
       //caracter encontrado
       if (pasarAminuscSinAcentos) {
-        switch(c) {
-          case (char) 192: case (char) 193: case (char) 224: case (char) 225:
-            word.push_back('a'); break;
-          case (char) 200: case (char) 201: case (char) 232: case (char) 233:
-            word.push_back('e'); break;
-          case (char) 204: case (char) 205: case (char) 236: case (char) 237:
-            word.push_back('i'); break;
-          case (char) 210: case (char) 211: case (char) 242: case (char) 243:
-            word.push_back('o'); break;
-          case (char) 217: case (char) 218: case (char) 249: case (char) 250:
-            word.push_back('u'); break;
-          default:
-            if ('A' <= c && c <= 'Z' || (char) 192 <= c && c <= (char) 222) {
-              word.push_back(c + ('a' - 'A'));
-            } else {
-              word.push_back(c);
-            }
-        }
+        word.push_back(minusculaAcentos(c));
       } else {
         word.push_back(c);
       }
