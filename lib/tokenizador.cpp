@@ -44,6 +44,53 @@ Tokenizador& Tokenizador::operator=(const Tokenizador& tokenizador) {
 //string to list
 void Tokenizador::Tokenizar(const string& str, list<string>& tokens) const {
   tokens.erase(tokens.begin(), tokens.end());
+  //IDEA: usar idx para reordenar los separadores segun aparecen
+  string word;
+  const char *pointerToTheEnd = &*--str.end();
+  for(const char &c : str) {
+    bool esDelim = false;
+    for(const char &d : delimiters) {
+      //delimitador encontrado
+      if (c==d) {
+        esDelim = true;
+        break;
+      }
+    }
+    if(!esDelim) {
+      //caracter encontrado
+      if (pasarAminuscSinAcentos) {
+        switch(c) {
+          case (char) 192: case (char) 193: case (char) 224: case (char) 225:
+            word.push_back('a'); break;
+          case (char) 200: case (char) 201: case (char) 232: case (char) 233:
+            word.push_back('e'); break;
+          case (char) 204: case (char) 205: case (char) 236: case (char) 237:
+            word.push_back('i'); break;
+          case (char) 210: case (char) 211: case (char) 242: case (char) 243:
+            word.push_back('o'); break;
+          case (char) 217: case (char) 218: case (char) 249: case (char) 250:
+            word.push_back('u'); break;
+          default:
+            if ('A' <= c && c <= 'Z' || (char) 192 <= c && c <= (char) 222) {
+              word.push_back(c + ('a' - 'A'));
+            } else {
+              word.push_back(c);
+            }
+        }
+      } else {
+        word.push_back(c);
+      }
+    }
+    if(esDelim || &c == pointerToTheEnd) {
+      if(0 < word.size()) {
+        //guarda palabra
+        tokens.push_back(word);
+        //borra string
+        word.clear();
+      }
+    }
+  }
+  /*
   string::size_type lastPos, pos = 0;
 
   lastPos = str.find_first_not_of(delimiters, pos);
@@ -54,6 +101,7 @@ void Tokenizador::Tokenizar(const string& str, list<string>& tokens) const {
     lastPos = str.find_first_not_of(delimiters, pos);
     pos = str.find_first_of(delimiters, lastPos);
   }
+  */
 }
 
 //file to file (custom name)
