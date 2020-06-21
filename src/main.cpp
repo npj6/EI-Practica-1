@@ -1,7 +1,7 @@
 #include "tokenizador.h"
 
 int main (void) {
-  Tokenizador a(":", false, false);
+  Tokenizador a(":", false, true);
   list<string> tokens;
   tokens.push_back("payback is a bitch");
   tokens.push_back("aint she");

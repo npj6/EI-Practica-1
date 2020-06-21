@@ -13,19 +13,19 @@ Tokenizador::Tokenizador(const string& delimitadoresPalabra, const bool& kcasosE
   delimiters = delimitadoresPalabra;
   normalizarDelimitadores(delimiters);
   casosEspeciales = kcasosEspeciales;
-  pasarAminuscSinAcentos = minuscSinAcentos;
+  PasarAminuscSinAcentos(minuscSinAcentos);
 }
 
 Tokenizador::Tokenizador(const Tokenizador& tokenizador) {
   delimiters = tokenizador.delimiters;
   casosEspeciales = tokenizador.casosEspeciales;
-  pasarAminuscSinAcentos = tokenizador.pasarAminuscSinAcentos;
+  PasarAminuscSinAcentos(tokenizador.pasarAminuscSinAcentos);
 }
 
 Tokenizador::Tokenizador() {
   delimiters = ",;:.-/+*\\ '\"{}[]()<>¡!¿?&#=\t\n\r@";
   casosEspeciales = true;
-  pasarAminuscSinAcentos = false;
+  PasarAminuscSinAcentos(false);
 }
 
 Tokenizador::~Tokenizador() {
@@ -35,32 +35,39 @@ Tokenizador::~Tokenizador() {
 Tokenizador& Tokenizador::operator=(const Tokenizador& tokenizador) {
   delimiters = tokenizador.delimiters;
   casosEspeciales = tokenizador.casosEspeciales;
-  pasarAminuscSinAcentos = tokenizador.pasarAminuscSinAcentos;
+  PasarAminuscSinAcentos(tokenizador.pasarAminuscSinAcentos);
   return *this;
 }
 
-char minusculaAcentos (const char &c) {
-  switch(c) {
-    case (char) 192: case (char) 193: case (char) 224: case (char) 225:
-      return 'a';
-    case (char) 200: case (char) 201: case (char) 232: case (char) 233:
-      return 'e';
-    case (char) 204: case (char) 205: case (char) 236: case (char) 237:
-      return 'i';
-    case (char) 210: case (char) 211: case (char) 242: case (char) 243:
-      return 'o';
-    case (char) 217: case (char) 218: case (char) 249: case (char) 250:
-      return 'u';
-    default:
-      if ('A' <= c && c <= 'Z' || (char) 192 <= c && c <= (char) 222) {
-        return c + ('a' - 'A');
-      } else {
-        return c;
-      }
-    }
-}
 
 /*MAIN FUNCTIONS*/
+
+void Tokenizador::addCharToWordBasic(string &word, const char &c) const {
+  word.push_back(c);
+}
+
+void Tokenizador::addCharToWordAccentsLower(string &word, const char &c) const {
+  char newC;
+  switch(c) {
+    case (char) 192: case (char) 193: case (char) 224: case (char) 225:
+      newC = 'a';
+    case (char) 200: case (char) 201: case (char) 232: case (char) 233:
+      newC = 'e';
+    case (char) 204: case (char) 205: case (char) 236: case (char) 237:
+      newC = 'i';
+    case (char) 210: case (char) 211: case (char) 242: case (char) 243:
+      newC = 'o';
+    case (char) 217: case (char) 218: case (char) 249: case (char) 250:
+      newC = 'u';
+    default:
+      if ('A' <= c && c <= 'Z' || (char) 192 <= c && c <= (char) 222) {
+        newC = c + ('a' - 'A');
+      } else {
+        newC = c;
+      }
+    }
+    word.push_back(newC);
+}
 
 //string to list
 void Tokenizador::Tokenizar(const string& str, list<string>& tokens) const {
@@ -79,11 +86,7 @@ void Tokenizador::Tokenizar(const string& str, list<string>& tokens) const {
     }
     if(!esDelim) {
       //caracter encontrado
-      if (pasarAminuscSinAcentos) {
-        word.push_back(minusculaAcentos(c));
-      } else {
-        word.push_back(c);
-      }
+      (this->*addCharToWord)(word, c);
     }
     if(esDelim || &c == pointerToTheEnd) {
       if(0 < word.size()) {
@@ -94,18 +97,6 @@ void Tokenizador::Tokenizar(const string& str, list<string>& tokens) const {
       }
     }
   }
-  /*
-  string::size_type lastPos, pos = 0;
-
-  lastPos = str.find_first_not_of(delimiters, pos);
-  pos = str.find_first_of(delimiters, lastPos);
-
-  while(string::npos != pos || string::npos != lastPos) {
-    tokens.push_back(str.substr(lastPos, pos - lastPos));
-    lastPos = str.find_first_not_of(delimiters, pos);
-    pos = str.find_first_of(delimiters, lastPos);
-  }
-  */
 }
 
 //file to file (custom name)
@@ -221,6 +212,11 @@ bool Tokenizador::CasosEspeciales() const {
 
 void Tokenizador::PasarAminuscSinAcentos(const bool& nuevoPasarAminuscSinAcentos) {
   pasarAminuscSinAcentos = nuevoPasarAminuscSinAcentos;
+  if(pasarAminuscSinAcentos) {
+    addCharToWord = &Tokenizador::addCharToWordAccentsLower;
+  } else {
+    addCharToWord = &Tokenizador::addCharToWordBasic;
+  }
 }
 
 bool Tokenizador::PasarAminuscSinAcentos() {
