@@ -79,8 +79,7 @@ void Tokenizador::addCharToWordAccentsLower(string &word, const char &c) const {
 void Tokenizador::Tokenizar(istream& input, OutputIF& output) const {
   //IDEA: usar idx para reordenar los separadores segun aparecen
   string word; bool esDelim; char c;
-  input >> noskipws;
-  while (input >> c) {
+  while (input.get(c) && !input.eof()) {
     esDelim = false;
     for(const char &d : delimiters) { if (c==d) { esDelim = true; break; } }
     if(esDelim) {
