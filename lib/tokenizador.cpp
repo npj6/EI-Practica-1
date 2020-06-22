@@ -40,6 +40,22 @@ Tokenizador& Tokenizador::operator=(const Tokenizador& tokenizador) {
 }
 
 
+class OutputIF {
+  public:
+    virtual void add(const string &word) = 0;
+};
+
+class OutputList : public OutputIF {
+  public:
+    list<string> &output;
+
+    OutputList(list<string> &o) : output(o) { }
+
+    void add(const string &word) {
+      output.push_back(word);
+    }
+};
+
 /*MAIN FUNCTIONS*/
 
 void Tokenizador::addCharToWordBasic(string &word, const char &c) const {
