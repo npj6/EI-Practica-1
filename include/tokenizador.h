@@ -11,6 +11,19 @@
 
   using namespace std;
 
+  class OutputIF {
+    public:
+      virtual void add(const string &word) = 0;
+  };
+
+  class OutputList : public OutputIF {
+    public:
+      list<string> &output;
+
+      OutputList(list<string> &o);
+
+      void add(const string &word);
+  };
 
   class Tokenizador {
       friend ostream& operator<<(ostream&, const Tokenizador&);
@@ -41,6 +54,9 @@
       // Pone delimiters=""
 
       Tokenizador& operator=(const Tokenizador&);
+
+      //string to output
+      void Tokenizar(const string& str, OutputIF& output) const;
 
       void Tokenizar(const string& str, list<string>& tokens) const;
       /* Tokeniza str devolviendo el resultado en tokens.

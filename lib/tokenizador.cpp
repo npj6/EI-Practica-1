@@ -40,21 +40,11 @@ Tokenizador& Tokenizador::operator=(const Tokenizador& tokenizador) {
 }
 
 
-class OutputIF {
-  public:
-    virtual void add(const string &word) = 0;
-};
+OutputList::OutputList(list<string> &o) : output(o) { }
 
-class OutputList : public OutputIF {
-  public:
-    list<string> &output;
-
-    OutputList(list<string> &o) : output(o) { }
-
-    void add(const string &word) {
-      output.push_back(word);
-    }
-};
+void OutputList::add(const string &word) {
+  output.push_back(word);
+}
 
 /*MAIN FUNCTIONS*/
 
@@ -85,10 +75,8 @@ void Tokenizador::addCharToWordAccentsLower(string &word, const char &c) const {
     word.push_back(newC);
 }
 
-//string to list
-void Tokenizador::Tokenizar(const string& str, list<string>& tokens) const {
-  tokens.erase(tokens.begin(), tokens.end());
-
+//string to output
+void Tokenizador::Tokenizar(const string& str, OutputIF& output) const {
   //IDEA: usar idx para reordenar los separadores segun aparecen
   string word; bool esDelim;
 
@@ -96,7 +84,7 @@ void Tokenizador::Tokenizar(const string& str, list<string>& tokens) const {
     esDelim = false;
     for(const char &d : delimiters) { if (c==d) { esDelim = true; break; } }
     if(esDelim) {
-      if(0 < word.size()) { tokens.push_back(word); word.clear(); }
+      if(0 < word.size()) { output.add(word); word.clear(); }
     } else {
       (this->*addCharToWord)(word, c);
     }
@@ -104,8 +92,15 @@ void Tokenizador::Tokenizar(const string& str, list<string>& tokens) const {
 
   //añade la ultima palabra
   if(0 < word.size()) {
-    tokens.push_back(word);
+    output.add(word);
   }
+}
+
+//string to list
+void Tokenizador::Tokenizar(const string& str, list<string>& tokens) const {
+  tokens.erase(tokens.begin(), tokens.end());
+  OutputList output(tokens);
+  Tokenizar(str, output);
 }
 
 //file to file (custom name)
