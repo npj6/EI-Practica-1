@@ -5,6 +5,7 @@
   #include <string>
   #include <iostream>
   #include <list>
+  #include <sstream>
 
   #include <sys/stat.h>
 
@@ -65,7 +66,7 @@
       Tokenizador& operator=(const Tokenizador&);
 
       //string to output
-      void Tokenizar(const string& str, OutputIF& output) const;
+      void Tokenizar(istream& input, OutputIF& output) const;
 
       void Tokenizar(const string& str, list<string>& tokens) const;
       /* Tokeniza str devolviendo el resultado en tokens.

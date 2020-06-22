@@ -41,17 +41,10 @@ Tokenizador& Tokenizador::operator=(const Tokenizador& tokenizador) {
 
 
 OutputList::OutputList(list<string> &o) : output(o) { }
-
-void OutputList::add(const string &word) {
-  output.push_back(word);
-}
+void OutputList::add(const string &word) { output.push_back(word); }
 
 OutputString::OutputString(string &o) : output(o) { }
-
-void OutputString::add(const string &word) {
-  output.append(word);
-  output.push_back('\n');
-}
+void OutputString::add(const string &word) { output.append(word); output.push_back('\n'); }
 
 /*MAIN FUNCTIONS*/
 
@@ -83,11 +76,11 @@ void Tokenizador::addCharToWordAccentsLower(string &word, const char &c) const {
 }
 
 //string to output
-void Tokenizador::Tokenizar(const string& str, OutputIF& output) const {
+void Tokenizador::Tokenizar(istream& input, OutputIF& output) const {
   //IDEA: usar idx para reordenar los separadores segun aparecen
-  string word; bool esDelim;
-
-  for(const char &c : str) {
+  string word; bool esDelim; char c;
+  input >> noskipws;
+  while (input >> c) {
     esDelim = false;
     for(const char &d : delimiters) { if (c==d) { esDelim = true; break; } }
     if(esDelim) {
@@ -107,7 +100,8 @@ void Tokenizador::Tokenizar(const string& str, OutputIF& output) const {
 void Tokenizador::Tokenizar(const string& str, list<string>& tokens) const {
   tokens.erase(tokens.begin(), tokens.end());
   OutputList output(tokens);
-  Tokenizar(str, output);
+  istringstream input(str);
+  Tokenizar(input, output);
 }
 
 //file to file (custom name)
@@ -129,13 +123,7 @@ bool Tokenizador::Tokenizar(const string& i, const string& f) const {
     cerr << "ERROR: No existe el archivo " << i << endl;
     return false;
   } else {
-    while(!input.eof()) {
-      cadena="";
-      getline(input, cadena);
-      if(cadena.length() != 0) {
-        Tokenizar(cadena, o);
-      }
-    }
+    Tokenizar(input, o);
   }
   input.close();
 
