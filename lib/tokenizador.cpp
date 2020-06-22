@@ -129,13 +129,11 @@ bool Tokenizador::Tokenizar(const string& i, const string& f) const {
     cerr << "ERROR: No existe el archivo " << i << endl;
     return false;
   } else {
-    while(!input.eof()) {
-      cadena="";
-      getline(input, cadena);
-      if(cadena.length() != 0) {
-        Tokenizar(cadena, o);
-      }
-    }
+    input.seekg(0, ios::end);
+    cadena.resize(input.tellg());
+    input.seekg(0, ios::beg);
+    input.read(&cadena[0], cadena.size());
+    Tokenizar(cadena, o);
   }
   input.close();
 
