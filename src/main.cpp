@@ -9,6 +9,6 @@ int main (void) {
   for(auto i=tokens.begin(); i != tokens.end(); ++i) {
     cout << *i << endl;
   }
-  a.TokenizarDirectorio("src/test");
+  a.Tokenizar("src/main.cpp", "main.tk");
   return 0;
 }

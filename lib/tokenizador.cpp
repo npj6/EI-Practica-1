@@ -46,6 +46,12 @@ void OutputList::add(const string &word) {
   output.push_back(word);
 }
 
+OutputFile::OutputFile(ofstream& o) : output(o) { }
+
+void OutputFile::add(const string& word) {
+  output << word << endl;
+}
+
 /*MAIN FUNCTIONS*/
 
 void Tokenizador::addCharToWordBasic(string &word, const char &c) const {
@@ -107,7 +113,7 @@ void Tokenizador::Tokenizar(const string& str, list<string>& tokens) const {
 bool Tokenizador::Tokenizar(const string& i, const string& f) const {
   ifstream input; ofstream output;
   string cadena;
-  list<string> tokens;
+  OutputFile o(output);
 
   struct stat dir;
   int err=stat(i.c_str(), &dir);
@@ -120,22 +126,17 @@ bool Tokenizador::Tokenizar(const string& i, const string& f) const {
     cerr << "ERROR: No existe el archivo " << i << endl;
     return false;
   } else {
+    output.open(f.c_str());
     while(!input.eof()) {
       cadena="";
       getline(input, cadena);
       if(cadena.length() != 0) {
-        list<string> tokensTEMP;
-        Tokenizar(cadena, tokensTEMP);
-        tokens.splice(tokens.end(), tokensTEMP);
+        Tokenizar(cadena, o);
       }
     }
   }
   input.close();
 
-  output.open(f.c_str());
-  for(auto itS=tokens.begin(); itS!=tokens.end(); itS++) {
-    output << (*itS) << endl;
-  }
   output.close();
   return true;
 }

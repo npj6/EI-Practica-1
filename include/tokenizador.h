@@ -25,6 +25,15 @@
       void add(const string &word);
   };
 
+  class OutputFile : public OutputIF {
+    public:
+      ofstream &output;
+
+      OutputFile(ofstream& o);
+
+      void add(const string &word);
+  };
+
   class Tokenizador {
       friend ostream& operator<<(ostream&, const Tokenizador&);
       /* cout << "DELIMITADORES: " << delimiters
