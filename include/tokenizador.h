@@ -18,9 +18,18 @@
 
   class OutputList : public OutputIF {
     public:
-      list<string> &output;
+      list<string>& output;
 
-      OutputList(list<string> &o);
+      OutputList(list<string>& o);
+
+      void add(const string& word);
+  };
+
+  class OutputString : public OutputIF {
+    public:
+      string &output;
+
+      OutputString(string& o);
 
       void add(const string &word);
   };

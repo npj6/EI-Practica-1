@@ -46,6 +46,13 @@ void OutputList::add(const string &word) {
   output.push_back(word);
 }
 
+OutputString::OutputString(string &o) : output(o) { }
+
+void OutputString::add(const string &word) {
+  output.append(word);
+  output.push_back('\n');
+}
+
 /*MAIN FUNCTIONS*/
 
 void Tokenizador::addCharToWordBasic(string &word, const char &c) const {
@@ -107,7 +114,9 @@ void Tokenizador::Tokenizar(const string& str, list<string>& tokens) const {
 bool Tokenizador::Tokenizar(const string& i, const string& f) const {
   ifstream input; ofstream output;
   string cadena;
-  list<string> tokens;
+
+  string salida;
+  OutputString o(salida);
 
   struct stat dir;
   int err=stat(i.c_str(), &dir);
@@ -124,18 +133,14 @@ bool Tokenizador::Tokenizar(const string& i, const string& f) const {
       cadena="";
       getline(input, cadena);
       if(cadena.length() != 0) {
-        list<string> tokensTEMP;
-        Tokenizar(cadena, tokensTEMP);
-        tokens.splice(tokens.end(), tokensTEMP);
+        Tokenizar(cadena, o);
       }
     }
   }
   input.close();
 
   output.open(f.c_str());
-  for(auto itS=tokens.begin(); itS!=tokens.end(); itS++) {
-    output << (*itS) << endl;
-  }
+  output << o.output;
   output.close();
   return true;
 }
