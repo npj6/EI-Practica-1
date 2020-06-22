@@ -41,17 +41,10 @@ Tokenizador& Tokenizador::operator=(const Tokenizador& tokenizador) {
 
 
 OutputList::OutputList(list<string> &o) : output(o) { }
-
-void OutputList::add(const string &word) {
-  output.push_back(word);
-}
+void OutputList::add(const string &word) { output.push_back(word); }
 
 OutputString::OutputString(string &o) : output(o) { }
-
-void OutputString::add(const string &word) {
-  output.append(word);
-  output.push_back('\n');
-}
+void OutputString::add(const string &word) { output.append(word); output.push_back('\n'); }
 
 /*MAIN FUNCTIONS*/
 
