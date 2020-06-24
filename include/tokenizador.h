@@ -159,6 +159,9 @@
       void (Tokenizador::*addCharToWord) (string&, const char&) const;
       void addCharToWordBasic(string &word, const char &c) const;
       void addCharToWordAccentsLower(string &word, const char &c) const;
+
+      char conversion[256];
+      void rellenarConversion(void);
   };
 
 #endif

@@ -14,18 +14,21 @@ Tokenizador::Tokenizador(const string& delimitadoresPalabra, const bool& kcasosE
   normalizarDelimitadores(delimiters);
   casosEspeciales = kcasosEspeciales;
   PasarAminuscSinAcentos(minuscSinAcentos);
+  rellenarConversion();
 }
 
 Tokenizador::Tokenizador(const Tokenizador& tokenizador) {
   delimiters = tokenizador.delimiters;
   casosEspeciales = tokenizador.casosEspeciales;
   PasarAminuscSinAcentos(tokenizador.pasarAminuscSinAcentos);
+  rellenarConversion();
 }
 
 Tokenizador::Tokenizador() {
   delimiters = ",;:.-/+*\\ '\"{}[]()<>¡!¿?&#=\t\n\r@";
   casosEspeciales = true;
   PasarAminuscSinAcentos(false);
+  rellenarConversion();
 }
 
 Tokenizador::~Tokenizador() {
@@ -36,6 +39,7 @@ Tokenizador& Tokenizador::operator=(const Tokenizador& tokenizador) {
   delimiters = tokenizador.delimiters;
   casosEspeciales = tokenizador.casosEspeciales;
   PasarAminuscSinAcentos(tokenizador.pasarAminuscSinAcentos);
+  rellenarConversion();
   return *this;
 }
 
@@ -52,27 +56,34 @@ void Tokenizador::addCharToWordBasic(string &word, const char &c) const {
   word.push_back(c);
 }
 
-void Tokenizador::addCharToWordAccentsLower(string &word, const char &c) const {
+
+void Tokenizador::rellenarConversion(void) {
   char newC;
-  switch(c) {
-    case (char) 192: case (char) 193: case (char) 224: case (char) 225:
-      newC = 'a'; break;
-    case (char) 200: case (char) 201: case (char) 232: case (char) 233:
-      newC = 'e'; break;
-    case (char) 204: case (char) 205: case (char) 236: case (char) 237:
-      newC = 'i'; break;
-    case (char) 210: case (char) 211: case (char) 242: case (char) 243:
-      newC = 'o'; break;
-    case (char) 217: case (char) 218: case (char) 249: case (char) 250:
-      newC = 'u'; break;
-    default:
-      if ('A' <= c && c <= 'Z' || (char) 192 <= c && c <= (char) 222) {
-        newC = c + ('a' - 'A');
-      } else {
-        newC = c;
-      }
+  for(int c=-128; c<128; c++) {
+    switch(c) {
+      case (char) 192: case (char) 193: case (char) 224: case (char) 225:
+        newC = 'a'; break;
+      case (char) 200: case (char) 201: case (char) 232: case (char) 233:
+        newC = 'e'; break;
+      case (char) 204: case (char) 205: case (char) 236: case (char) 237:
+        newC = 'i'; break;
+      case (char) 210: case (char) 211: case (char) 242: case (char) 243:
+        newC = 'o'; break;
+      case (char) 217: case (char) 218: case (char) 249: case (char) 250:
+        newC = 'u'; break;
+      default:
+        if ('A' <= c && c <= 'Z' || (char) 192 <= c && c <= (char) 222) {
+          newC = c + ('a' - 'A');
+        } else {
+          newC = c;
+        }
     }
-    word.push_back(newC);
+    conversion[c+128] = newC;
+  }
+}
+
+void Tokenizador::addCharToWordAccentsLower(string &word, const char &c) const {
+    word.push_back(conversion[128 + (int) c]);
 }
 
 //string to output
