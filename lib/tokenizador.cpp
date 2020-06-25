@@ -10,22 +10,21 @@ ostream& operator<<(ostream& os, const Tokenizador& tokenizador) {
 }
 
 Tokenizador::Tokenizador(const string& delimitadoresPalabra, const bool& kcasosEspeciales, const bool& minuscSinAcentos) {
-  delimiters = delimitadoresPalabra;
-  normalizarDelimitadores(delimiters);
+  DelimitadoresPalabra(delimitadoresPalabra);
   casosEspeciales = kcasosEspeciales;
   PasarAminuscSinAcentos(minuscSinAcentos);
   rellenarConversion();
 }
 
 Tokenizador::Tokenizador(const Tokenizador& tokenizador) {
-  delimiters = tokenizador.delimiters;
+  DelimitadoresPalabra(tokenizador.delimiters);
   casosEspeciales = tokenizador.casosEspeciales;
   PasarAminuscSinAcentos(tokenizador.pasarAminuscSinAcentos);
   rellenarConversion();
 }
 
 Tokenizador::Tokenizador() {
-  delimiters = ",;:.-/+*\\ '\"{}[]()<>¡!¿?&#=\t\n\r@";
+  DelimitadoresPalabra(",;:.-/+*\\ '\"{}[]()<>¡!¿?&#=\t\n\r@");
   casosEspeciales = true;
   PasarAminuscSinAcentos(false);
   rellenarConversion();
@@ -36,7 +35,7 @@ Tokenizador::~Tokenizador() {
 }
 
 Tokenizador& Tokenizador::operator=(const Tokenizador& tokenizador) {
-  delimiters = tokenizador.delimiters;
+  DelimitadoresPalabra(tokenizador.delimiters);
   casosEspeciales = tokenizador.casosEspeciales;
   PasarAminuscSinAcentos(tokenizador.pasarAminuscSinAcentos);
   rellenarConversion();
@@ -52,10 +51,15 @@ void OutputString::add(const string &word) { output.append(word); output.push_ba
 
 /*MAIN FUNCTIONS*/
 
+/*
 void Tokenizador::addCharToWordBasic(string &word, const char &c) const {
   word.push_back(c);
 }
 
+void Tokenizador::addCharToWordAccentsLower(string &word, const char &c) const {
+    word.push_back(conversion[128 + (int) c]);
+}
+*/
 
 void Tokenizador::rellenarConversion(void) {
   char newC;
@@ -83,9 +87,7 @@ void Tokenizador::rellenarConversion(void) {
   }
 }
 
-void Tokenizador::addCharToWordAccentsLower(string &word, const char &c) const {
-    word.push_back(conversion[128 + (int) c]);
-}
+
 
 //string to output
 void Tokenizador::Tokenizar(const string& str, OutputIF& output) const {
@@ -130,6 +132,7 @@ bool Tokenizador::Tokenizar(const string& i, const string& f) const {
     cerr << "ERROR: " << i << " es una carpeta" << endl;
     return false;
   }
+
   input.open(i.c_str());
   if(!input) {
     cerr << "ERROR: No existe el archivo " << i << endl;
@@ -209,8 +212,7 @@ void Tokenizador::DelimitadoresPalabra(const string& nuevoDelimiters) {
 }
 
 void Tokenizador::AnyadirDelimitadoresPalabra(const string& nuevoDelimiters) {
-  delimiters += nuevoDelimiters;
-  normalizarDelimitadores(delimiters);
+  DelimitadoresPalabra(delimiters + nuevoDelimiters);
 }
 
 string Tokenizador::DelimitadoresPalabra() const {
@@ -228,10 +230,10 @@ bool Tokenizador::CasosEspeciales() const {
 void Tokenizador::PasarAminuscSinAcentos(const bool& nuevoPasarAminuscSinAcentos) {
   pasarAminuscSinAcentos = nuevoPasarAminuscSinAcentos;
   if(pasarAminuscSinAcentos) {
-    addCharToWord = &Tokenizador::addCharToWordAccentsLower;
+    //addCharToWord = &Tokenizador::addCharToWordAccentsLower;
     addChar = conversion;
   } else {
-    addCharToWord = &Tokenizador::addCharToWordBasic;
+    //addCharToWord = &Tokenizador::addCharToWordBasic;
     addChar = normal;
   }
 }

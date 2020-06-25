@@ -155,15 +155,18 @@
       bool pasarAminuscSinAcentos;
       // Si true pasara el token a minusculas y quitara acentos antes de realizar la tokenizacion
 
-      //puntero a funcion (en spanish quedaba mu largo bro,,,,)
+      /*ejemplos puntero a funcion
       void (Tokenizador::*addCharToWord) (string&, const char&) const;
       void addCharToWordBasic(string &word, const char &c) const;
       void addCharToWordAccentsLower(string &word, const char &c) const;
+      */
 
+      //pasar a minusc por array
       char conversion[256];
       char normal[256];
       char* addChar;
       void rellenarConversion(void);
+
   };
 
 #endif
