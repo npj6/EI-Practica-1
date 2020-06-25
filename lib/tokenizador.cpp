@@ -79,6 +79,7 @@ void Tokenizador::rellenarConversion(void) {
         }
     }
     conversion[c+128] = newC;
+    normal[c+128] = c;
   }
 }
 
@@ -97,7 +98,8 @@ void Tokenizador::Tokenizar(const string& str, OutputIF& output) const {
     if(esDelim) {
       if(0 < word.size()) { output.add(word); word.clear(); }
     } else {
-      (this->*addCharToWord)(word, c);
+      //(this->*addCharToWord)(word, c);
+      word.push_back(addChar[128 + (int) c]);
     }
   }
 
@@ -227,8 +229,10 @@ void Tokenizador::PasarAminuscSinAcentos(const bool& nuevoPasarAminuscSinAcentos
   pasarAminuscSinAcentos = nuevoPasarAminuscSinAcentos;
   if(pasarAminuscSinAcentos) {
     addCharToWord = &Tokenizador::addCharToWordAccentsLower;
+    addChar = conversion;
   } else {
     addCharToWord = &Tokenizador::addCharToWordBasic;
+    addChar = normal;
   }
 }
 

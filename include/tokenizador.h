@@ -161,6 +161,8 @@
       void addCharToWordAccentsLower(string &word, const char &c) const;
 
       char conversion[256];
+      char normal[256];
+      char* addChar;
       void rellenarConversion(void);
   };
 
