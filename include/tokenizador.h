@@ -5,6 +5,8 @@
   #include <string>
   #include <iostream>
   #include <list>
+  #include <vector>
+  #include <algorithm>
 
   #include <sys/stat.h>
 
@@ -43,6 +45,14 @@
        * el campo delimiters se imprimira con el string con el que se inicializo el tokenizador
        */
     public:
+      void test (void) const {
+        cout << "\"";
+        for(const char& c : idxDelims) {
+          cout << c;
+        }
+        cout << "\"" << endl;
+      }
+
       Tokenizador(const string& delimitadoresPalabra, const bool& kcasosEspeciales, const bool& minuscSinAcentos);
       /* Inicializa delimiters a delimitadoresPalabra filtrando que no se introduzcan delimitadores
        * repetidos (de izquierda a derecha, en cuyo caso se eliminarian los que hayan sido repetidos
@@ -167,6 +177,13 @@
       char* addChar;
       void rellenarConversion(void);
 
+      //espacio como delimitador en casos especiales
+      void comprobarDelimitadoresCasosEspeciales(void);
+
+      //idx delimiters
+      vector<char> idxDelims;
+      vector<unsigned> idx;
+      vector<unsigned> idxCount;
   };
 
 #endif

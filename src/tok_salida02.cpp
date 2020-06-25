@@ -1,6 +1,6 @@
-#include <iostream> 
+#include <iostream>
 #include <string>
-#include <list> 
+#include <list>
 #include "tokenizador.h"
 
 using namespace std;

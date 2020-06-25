@@ -11,21 +11,21 @@ ostream& operator<<(ostream& os, const Tokenizador& tokenizador) {
 
 Tokenizador::Tokenizador(const string& delimitadoresPalabra, const bool& kcasosEspeciales, const bool& minuscSinAcentos) {
   DelimitadoresPalabra(delimitadoresPalabra);
-  casosEspeciales = kcasosEspeciales;
+  CasosEspeciales(kcasosEspeciales);
   PasarAminuscSinAcentos(minuscSinAcentos);
   rellenarConversion();
 }
 
 Tokenizador::Tokenizador(const Tokenizador& tokenizador) {
   DelimitadoresPalabra(tokenizador.delimiters);
-  casosEspeciales = tokenizador.casosEspeciales;
+  CasosEspeciales(tokenizador.casosEspeciales);
   PasarAminuscSinAcentos(tokenizador.pasarAminuscSinAcentos);
   rellenarConversion();
 }
 
 Tokenizador::Tokenizador() {
   DelimitadoresPalabra(",;:.-/+*\\ '\"{}[]()<>¡!¿?&#=\t\n\r@");
-  casosEspeciales = true;
+  CasosEspeciales(true);
   PasarAminuscSinAcentos(false);
   rellenarConversion();
 }
@@ -36,7 +36,7 @@ Tokenizador::~Tokenizador() {
 
 Tokenizador& Tokenizador::operator=(const Tokenizador& tokenizador) {
   DelimitadoresPalabra(tokenizador.delimiters);
-  casosEspeciales = tokenizador.casosEspeciales;
+  CasosEspeciales(tokenizador.casosEspeciales);
   PasarAminuscSinAcentos(tokenizador.pasarAminuscSinAcentos);
   rellenarConversion();
   return *this;
@@ -96,7 +96,7 @@ void Tokenizador::Tokenizar(const string& str, OutputIF& output) const {
 
   for(const char &c : str) {
     esDelim = false;
-    for(const char &d : delimiters) { if (c==d) { esDelim = true; break; } }
+    for(const char &d : idxDelims) { if (c==d) { esDelim = true; break; } }
     if(esDelim) {
       if(0 < word.size()) { output.add(word); word.clear(); }
     } else {
@@ -209,6 +209,18 @@ bool Tokenizador::TokenizarDirectorio(const string& i) const {
 void Tokenizador::DelimitadoresPalabra(const string& nuevoDelimiters) {
   delimiters = nuevoDelimiters;
   normalizarDelimitadores(delimiters);
+
+  idxDelims.clear();
+  idx.clear();
+  idxCount.clear();
+
+  for(unsigned i=0; i<delimiters.length(); i++) {
+    idxDelims.push_back(delimiters[i]);
+    idx.push_back(i);
+    idxCount.push_back(0);
+  }
+
+  comprobarDelimitadoresCasosEspeciales();
 }
 
 void Tokenizador::AnyadirDelimitadoresPalabra(const string& nuevoDelimiters) {
@@ -221,6 +233,42 @@ string Tokenizador::DelimitadoresPalabra() const {
 
 void Tokenizador::CasosEspeciales(const bool& nuevoCasosEspeciales) {
   casosEspeciales = nuevoCasosEspeciales;
+  comprobarDelimitadoresCasosEspeciales();
+}
+
+
+void Tokenizador::comprobarDelimitadoresCasosEspeciales(void) {
+    //si espacio no es un delimitador
+    if(delimiters.find(" ") == string::npos) {
+      //al activar casos especiales lo añade, al desactivarlos lo quita
+      if(casosEspeciales) {
+        if (find(idxDelims.begin(), idxDelims.end(), ' ')==idxDelims.end()) {
+          idxDelims.push_back(' ');
+          idx.push_back(idx.size());
+          idxCount.push_back(0);
+        }
+      } else {
+        int place = -1;
+        for(unsigned i=0; i<idx.size(); i++) {
+          //si ha encontrado el espacio, mueve los siguientes hacia atras
+          if(place != -1) {
+            idx[i]--;
+          }
+
+          //si hay espacio lo encuentra
+          if(idxDelims[idx[i]] == ' ') {
+            place = i;
+          }
+        }
+
+        //si lo ha encontrado, lo borra
+        if(place != -1) {
+          idxDelims.erase(idxDelims.begin()+idx[place]);
+          idxCount.erase(idxCount.begin()+idx[place]);
+          idx.erase(idx.begin()+place);
+        }
+      }
+    }
 }
 
 bool Tokenizador::CasosEspeciales() const {
