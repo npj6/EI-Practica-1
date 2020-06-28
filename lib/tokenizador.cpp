@@ -250,11 +250,6 @@ void Tokenizador::comprobarDelimitadoresCasosEspeciales(void) {
       } else {
         int place = -1;
         for(unsigned i=0; i<idx.size(); i++) {
-          //si ha encontrado el espacio, mueve los siguientes hacia atras
-          if(place != -1) {
-            idx[i]--;
-          }
-
           //si hay espacio lo encuentra
           if(idxDelims[idx[i]] == ' ') {
             place = i;
@@ -263,6 +258,11 @@ void Tokenizador::comprobarDelimitadoresCasosEspeciales(void) {
 
         //si lo ha encontrado, lo borra
         if(place != -1) {
+          for(unsigned i=0; i<idx.size(); i++) {
+            if(idx[place] < idx[i]) {
+              idx[i]--;
+            }
+          }
           idxDelims.erase(idxDelims.begin()+idx[place]);
           idxCount.erase(idxCount.begin()+idx[place]);
           idx.erase(idx.begin()+place);
