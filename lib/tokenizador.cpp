@@ -90,13 +90,13 @@ void Tokenizador::rellenarConversion(void) {
 
 
 //string to output
-void Tokenizador::Tokenizar(const string& str, OutputIF& output) const {
+void Tokenizador::Tokenizar(const string& str, OutputIF& output) {
   //IDEA: usar idx para reordenar los separadores segun aparecen
   string word; bool esDelim;
 
   for(const char &c : str) {
     esDelim = false;
-    for(const char &d : idxDelims) { if (c==d) { esDelim = true; break; } }
+    for(unsigned d=0; d<idx.size(); d++) { if (idxDelims[idx[d]]==c) { esDelim = true; encontradoDelimitador(d); break; } }
     if(esDelim) {
       if(0 < word.size()) { output.add(word); word.clear(); }
     } else {
@@ -112,14 +112,14 @@ void Tokenizador::Tokenizar(const string& str, OutputIF& output) const {
 }
 
 //string to list
-void Tokenizador::Tokenizar(const string& str, list<string>& tokens) const {
+void Tokenizador::Tokenizar(const string& str, list<string>& tokens) {
   tokens.erase(tokens.begin(), tokens.end());
   OutputList output(tokens);
   Tokenizar(str, output);
 }
 
 //file to file (custom name)
-bool Tokenizador::Tokenizar(const string& i, const string& f) const {
+bool Tokenizador::Tokenizar(const string& i, const string& f) {
   ifstream input; ofstream output;
   string cadena;
 
@@ -154,12 +154,12 @@ bool Tokenizador::Tokenizar(const string& i, const string& f) const {
   return true;
 }
 //file to file (auto name)
-bool Tokenizador::Tokenizar(const string& i) const {
+bool Tokenizador::Tokenizar(const string& i) {
   return Tokenizar(i, i+".tk");
 }
 
 //files to files (from index)
-bool Tokenizador::TokenizarListaFicheros(const string &i) const {
+bool Tokenizador::TokenizarListaFicheros(const string &i) {
   ifstream input;
   string cadena;
   bool output = true;
@@ -189,7 +189,7 @@ bool Tokenizador::TokenizarListaFicheros(const string &i) const {
 }
 
 //files to files (from folder)
-bool Tokenizador::TokenizarDirectorio(const string& i) const {
+bool Tokenizador::TokenizarDirectorio(const string& i) {
   struct stat dir;
   int err=stat(i.c_str(), &dir);
   if(err==-1 || !S_ISDIR(dir.st_mode)) {
@@ -263,6 +263,7 @@ void Tokenizador::comprobarDelimitadoresCasosEspeciales(void) {
               idx[i]--;
             }
           }
+
           idxDelims.erase(idxDelims.begin()+idx[place]);
           idxCount.erase(idxCount.begin()+idx[place]);
           idx.erase(idx.begin()+place);

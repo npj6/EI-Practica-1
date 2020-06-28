@@ -75,21 +75,21 @@
       Tokenizador& operator=(const Tokenizador&);
 
       //string to output
-      void Tokenizar(const string& str, OutputIF& output) const;
+      void Tokenizar(const string& str, OutputIF& output);
 
-      void Tokenizar(const string& str, list<string>& tokens) const;
+      void Tokenizar(const string& str, list<string>& tokens);
       /* Tokeniza str devolviendo el resultado en tokens.
        * La lista tokens se vaciará antes de almacenar el resultado de la tokenizacion
        */
 
-      bool Tokenizar(const string& i, const string& f) const;
+      bool Tokenizar(const string& i, const string& f);
       /* Tokeniza el fichero i guardando la salida en el fichero f (una palabra en cada linea del
        * fichero).
        * Devolverá true si se realiza la tokenizacion de forma correcta; false en caso contrario
        * enviando a cerr el mensaje correspondiente (p.ej. que no exista el archivo i)
        */
 
-      bool Tokenizar(const string& i) const;
+      bool Tokenizar(const string& i);
       /* Tokeniza el fichero i guardando la salida en un fichero de nombre i añadiendole
        * extension .tk (sin eliminar previamente la extension de i por ejemplo, del archivo pp.txt se
        * generaria el resultado en pp.txt.tk), y que contendra una palabra en cada linea del fichero.
@@ -98,7 +98,7 @@
        * archivo i)
        */
 
-      bool TokenizarListaFicheros(const string &i) const;
+      bool TokenizarListaFicheros(const string &i);
       /* Tokeniza el fichero i que contiene un nombre de fichero por linea guardando la salida en
        * ficheros (uno por cada linea de i) cuyo nombre sera el leido en i añadiendole la
        * extension .tk, y que contendra una palabra en cada line del fichero leido en i.
@@ -110,7 +110,7 @@
        * algun archivo en i que no exista)
        */
 
-      bool TokenizarDirectorio(const string& i) const;
+      bool TokenizarDirectorio(const string& i);
       /* Tokeniza todos los archivos que contenga el directorio i, incluyendo los de los
        * subdirectorios, guardando la salida en ficheros cuyo nombre sera el de entrada añadiendole
        * extension .tk, y que contendra una palabra en cada linea del fichero.
@@ -157,7 +157,7 @@
        * introdujeron los delimitadores
        */
 
-      bool casosEspeciales;
+      bool casosEspeciales = false;
       /* Si true detectara palabras compuestas y casos especiales. Sino trabajar al igual que el
        * algoritmo propuesto en la seccion "Version del tokenizador vista en clase"
        */
@@ -183,7 +183,17 @@
       //idx delimiters
       vector<char> idxDelims;
       vector<unsigned> idx;
-      vector<unsigned> idxCount;
+      vector<float> idxCount;
+
+      void encontradoDelimitador(unsigned pos) {
+        idxCount[idx[pos]]++;
+        while(pos != 0 && idxCount[idx[pos-1]] < idxCount[idx[pos]]) {
+          unsigned i = idx[pos];
+          idx[pos] = idx[pos-1];
+          pos--;
+          idx[pos] = i;
+        }
+      }
   };
 
 #endif
