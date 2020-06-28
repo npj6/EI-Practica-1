@@ -47,10 +47,14 @@
     public:
       void test (void) const {
         cout << "\"";
-        for(const char& c : idxDelims) {
-          cout << c;
+        for(const unsigned& c : idx) {
+          cout << idxDelims[c];
         }
         cout << "\"" << endl;
+        for(const unsigned& c: idx) {
+          cout << idxCount[c] << " ";
+        }
+        cout << endl;
       }
 
       Tokenizador(const string& delimitadoresPalabra, const bool& kcasosEspeciales, const bool& minuscSinAcentos);
