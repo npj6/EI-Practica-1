@@ -2,6 +2,7 @@
   #define TOKENIZADOR_H
 
   #include <fstream>
+  #include <iostream>
   #include <string>
   #include <iostream>
   #include <list>
@@ -9,7 +10,6 @@
   #include <algorithm>
 
   #include <sys/stat.h>
-
 
   using namespace std;
 
@@ -76,12 +76,12 @@
       ~Tokenizador();
       // Pone delimiters=""
 
-      Tokenizador& operator=(const Tokenizador&);
 
       //string to output
       void Tokenizar(const string& str, OutputIF& output);
 
       void Tokenizar(const string& str, list<string>& tokens);
+
       /* Tokeniza str devolviendo el resultado en tokens.
        * La lista tokens se vaciará antes de almacenar el resultado de la tokenizacion
        */

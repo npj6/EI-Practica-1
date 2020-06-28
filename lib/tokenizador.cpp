@@ -1,4 +1,6 @@
 #include "tokenizador.h"
+//output classes code
+#include "output.cpp"
 
 using namespace std;
 
@@ -151,12 +153,18 @@ bool Tokenizador::Tokenizar(const string& i, const string& f) {
   output.open(f.c_str());
   output << o.output;
   output.close();
+
   return true;
 }
+
 //file to file (auto name)
 bool Tokenizador::Tokenizar(const string& i) {
   return Tokenizar(i, i+".tk");
 }
+
+/*escribir todos los archivos de golpe vs escribir dentro del bucle para aprovechar ¿pipelining, parallel, idfk?*/
+/*TokenizarIndex, recibe una list<string> de archivos*/
+/*podria depender de tokenizar autoname si la implementacion es escribir cada fichero en cuanto se acabe*/
 
 //files to files (from index)
 bool Tokenizador::TokenizarListaFicheros(const string &i) {
@@ -202,6 +210,7 @@ bool Tokenizador::TokenizarDirectorio(const string& i) {
     system("rm .lista_fich");
     return output;
   }
+
 }
 
 
@@ -289,6 +298,10 @@ void Tokenizador::PasarAminuscSinAcentos(const bool& nuevoPasarAminuscSinAcentos
 
 bool Tokenizador::PasarAminuscSinAcentos() {
   return pasarAminuscSinAcentos;
+}
+
+void Tokenizador::normalizarTexto(const string& str, string &salida) const {
+  salida = str;
 }
 
 void Tokenizador::normalizarDelimitadores(string& delims){
