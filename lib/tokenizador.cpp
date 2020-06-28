@@ -92,14 +92,32 @@ void Tokenizador::rellenarConversion(void) {
 //string to output
 void Tokenizador::Tokenizar(const string& str, OutputIF& output) {
   //IDEA: usar idx para reordenar los separadores segun aparecen
-  string word; bool esDelim;
+  string word; bool esDelim, esDubiousDelim; char lastDubiousDelim = 'V'; //V se usa como "vacio"
 
   for(const char &c : str) {
     esDelim = false;
-    for(unsigned d=0; d<idx.size(); d++) { if (idxDelims[idx[d]]==c) { esDelim = true; encontradoDelimitador(d); break; } }
+    esDubiousDelim = false;
+
+    for(unsigned d=0; d<idx.size(); d++) {
+      char delim = idxDelims[idx[d]];
+      if (delim == c) {
+        esDelim = true;
+        encontradoDelimitador(d);
+        if (lastDubiousDelim == '-') {lastDubiousDelim = 'V'; break; } //last word was empty
+        if (casosEspeciales && delim == '-' && !word.empty()) { lastDubiousDelim = '-'; esDubiousDelim = true; }
+        break;
+      }
+    }
+
     if(esDelim) {
-      if(0 < word.size()) { output.add(word); word.clear(); }
+      if(!esDubiousDelim) {
+        if(0 < word.size()) { output.add(word); word.clear(); lastDubiousDelim = false;}
+      }
     } else {
+      if (lastDubiousDelim == '-') {
+        word.push_back(addChar[128 + (int) '-']);
+        lastDubiousDelim = 'V';
+      }
       //(this->*addCharToWord)(word, c);
       word.push_back(addChar[128 + (int) c]);
     }
