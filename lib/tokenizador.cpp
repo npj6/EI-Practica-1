@@ -77,36 +77,6 @@ void Tokenizador::rellenarConversion(void) {
   }
 }
 
-
-unsigned Tokenizador::estado0_delimNoCasosEspeciales(const char& c, string& word, OutputIF& output) const {
-    if(0 < word.size()) { output.add(word); word.clear(); }
-    return 0;
-}
-
-unsigned Tokenizador::estado0_noDelimNoCasosEspeciales(const char& c, string& word, OutputIF& output) const {
-  word.push_back(addChar[128 + (int) c]);
-  return 0;
-}
-
-unsigned Tokenizador::estado0_delim(const char& c, string& word, OutputIF& output) const {
-    if (c=='-' && !word.empty()) { return 1; }
-    if(0 < word.size()) { output.add(word); word.clear(); return 0; }
-}
-
-unsigned Tokenizador::estado0_noDelim(const char& c, string& word, OutputIF& output) const {
-  word.push_back(addChar[128 + (int) c]);
-  return 0;
-}
-
-unsigned Tokenizador::estado1_delim(const char& c, string& word, OutputIF& output) const {
-  return 0;
-}
-
-unsigned Tokenizador::estado1_noDelim(const char& c, string& word, OutputIF& output) const {
-  word.push_back('-'); word.push_back(addChar[128 + (int) c]);
-  return 0;
-}
-
 //string to output
 void Tokenizador::Tokenizar(const string& str, OutputIF& output) {
   string word; bool esDelim; unsigned estado = 0;
@@ -320,4 +290,67 @@ void Tokenizador::normalizarDelimitadores(string& delims){
       }
     }
   }
+}
+
+
+unsigned Tokenizador::estado0_delimNoCasosEspeciales(const char& c, string& word, OutputIF& output) const {
+    if(0 < word.size()) { output.add(word); word.clear(); }
+    return 0;
+}
+
+unsigned Tokenizador::estado0_noDelimNoCasosEspeciales(const char& c, string& word, OutputIF& output) const {
+  word.push_back(addChar[128 + (int) c]);
+  return 0;
+}
+
+unsigned Tokenizador::estado0_delim(const char& c, string& word, OutputIF& output) const {
+  if (c==':' && (word == "http" || word == "https" || word == "ftp")) {
+    return 3;
+  }
+  if (c=='-' && !word.empty()) { return 1; }
+  if(0 < word.size()) { output.add(word); word.clear(); return 0; }
+}
+
+unsigned Tokenizador::estado0_noDelim(const char& c, string& word, OutputIF& output) const {
+  word.push_back(addChar[128 + (int) c]);
+  return 0;
+}
+
+unsigned Tokenizador::estado1_delim(const char& c, string& word, OutputIF& output) const {
+  return 0;
+}
+
+unsigned Tokenizador::estado1_noDelim(const char& c, string& word, OutputIF& output) const {
+  word.push_back('-'); word.push_back(addChar[128 + (int) c]);
+  return 0;
+}
+
+unsigned Tokenizador::estado2_delim(const char& c, string& word, OutputIF& output) const {
+  string URLignoredDelims = "_:/.?&-=#@";
+  if (URLignoredDelims.find(c) != -1) {
+    word.push_back(c);
+    return 2;
+  }
+  return 0;
+}
+
+unsigned Tokenizador::estado2_noDelim(const char& c, string& word, OutputIF& output) const {
+  word.push_back(addChar[128 + (int) c]);
+  return 2;
+}
+
+unsigned Tokenizador::estado3_delim(const char& c, string& word, OutputIF& output) const {
+  string URLignoredDelims = "_:/.?&-=#@";
+  if (URLignoredDelims.find(c) != -1) {
+    word.push_back(':');
+    word.push_back(c);
+    return 2;
+  }
+  return 0;
+}
+
+unsigned Tokenizador::estado3_noDelim(const char& c, string& word, OutputIF& output) const {
+  word.push_back(':');
+  word.push_back(addChar[128 + (int) c]);
+  return 2;
 }
