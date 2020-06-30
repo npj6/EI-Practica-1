@@ -169,6 +169,22 @@
       bool pasarAminuscSinAcentos;
       // Si true pasara el token a minusculas y quitara acentos antes de realizar la tokenizacion
 
+
+      //automata de estados
+      vector<unsigned (Tokenizador::*)(const char &, string &, OutputIF &) const> funcionesDelim = {
+        &Tokenizador::estado0_delimNoCasosEspeciales
+      };
+
+      vector<unsigned (Tokenizador::*)(const char &, string &, OutputIF &) const> funcionesNoDelim = {
+        &Tokenizador::estado0_noDelimNoCasosEspeciales
+      };
+
+
+      unsigned estado0_delimNoCasosEspeciales(const char& c, string& word, OutputIF& output) const;
+      unsigned estado0_noDelimNoCasosEspeciales(const char& c, string& word, OutputIF& output) const;
+
+      unsigned estado0_delim(const char& c, string& word, OutputIF& output) const;
+      unsigned estado0_noDelim(const char& c, string& word, OutputIF& output) const;
       /*ejemplos puntero a funcion
       void (Tokenizador::*addCharToWord) (string&, const char&) const;
       void addCharToWordBasic(string &word, const char &c) const;

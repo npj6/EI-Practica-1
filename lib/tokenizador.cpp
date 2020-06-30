@@ -51,16 +51,6 @@ void OutputString::add(const string &word) { output.append(word); output.push_ba
 
 /*MAIN FUNCTIONS*/
 
-/*
-void Tokenizador::addCharToWordBasic(string &word, const char &c) const {
-  word.push_back(c);
-}
-
-void Tokenizador::addCharToWordAccentsLower(string &word, const char &c) const {
-    word.push_back(conversion[128 + (int) c]);
-}
-*/
-
 void Tokenizador::rellenarConversion(void) {
   char newC;
   for(int c=-128; c<128; c++) {
@@ -88,20 +78,38 @@ void Tokenizador::rellenarConversion(void) {
 }
 
 
+unsigned Tokenizador::estado0_delimNoCasosEspeciales(const char& c, string& word, OutputIF& output) const {
+    if(0 < word.size()) { output.add(word); word.clear(); }
+    return 0;
+}
+
+unsigned Tokenizador::estado0_noDelimNoCasosEspeciales(const char& c, string& word, OutputIF& output) const {
+  word.push_back(addChar[128 + (int) c]);
+  return 0;
+}
+
+unsigned Tokenizador::estado0_delim(const char& c, string& word, OutputIF& output) const {
+    if(0 < word.size()) { output.add(word); word.clear(); }
+    return 0;
+}
+
+unsigned Tokenizador::estado0_noDelim(const char& c, string& word, OutputIF& output) const {
+  word.push_back(addChar[128 + (int) c]);
+  return 0;
+}
 
 //string to output
 void Tokenizador::Tokenizar(const string& str, OutputIF& output) {
-  //IDEA: usar idx para reordenar los separadores segun aparecen
-  string word; bool esDelim;
+  string word; bool esDelim; unsigned estado = 0;
 
   for(const char &c : str) {
     esDelim = false;
     for(unsigned d=0; d<idx.size(); d++) { if (idxDelims[idx[d]]==c) { esDelim = true; encontradoDelimitador(d); break; } }
+
     if(esDelim) {
-      if(0 < word.size()) { output.add(word); word.clear(); }
+      estado = (this->*funcionesDelim[estado])(c, word, output);
     } else {
-      //(this->*addCharToWord)(word, c);
-      word.push_back(addChar[128 + (int) c]);
+      estado = (this->*funcionesNoDelim[estado])(c, word, output);
     }
   }
 
@@ -233,9 +241,15 @@ string Tokenizador::DelimitadoresPalabra() const {
 
 void Tokenizador::CasosEspeciales(const bool& nuevoCasosEspeciales) {
   casosEspeciales = nuevoCasosEspeciales;
+  if (casosEspeciales) {
+    funcionesDelim [0] = &Tokenizador::estado0_delimNoCasosEspeciales;
+    funcionesNoDelim[0] = &Tokenizador::estado0_noDelimNoCasosEspeciales;
+  } else {
+    funcionesDelim [0] = &Tokenizador::estado0_delim;
+    funcionesNoDelim[0] = &Tokenizador::estado0_noDelim;
+  }
   comprobarDelimitadoresCasosEspeciales();
 }
-
 
 void Tokenizador::comprobarDelimitadoresCasosEspeciales(void) {
     //si espacio no es un delimitador
@@ -279,10 +293,8 @@ bool Tokenizador::CasosEspeciales() const {
 void Tokenizador::PasarAminuscSinAcentos(const bool& nuevoPasarAminuscSinAcentos) {
   pasarAminuscSinAcentos = nuevoPasarAminuscSinAcentos;
   if(pasarAminuscSinAcentos) {
-    //addCharToWord = &Tokenizador::addCharToWordAccentsLower;
     addChar = conversion;
   } else {
-    //addCharToWord = &Tokenizador::addCharToWordBasic;
     addChar = normal;
   }
 }
