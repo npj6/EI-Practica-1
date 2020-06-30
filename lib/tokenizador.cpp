@@ -307,6 +307,7 @@ unsigned Tokenizador::estado0_delim(const char& c, string& word, OutputIF& outpu
   if (c==':' && (word == "http" || word == "https" || word == "ftp")) {
     return 3;
   }
+  if (c=='.' && !word.empty()) { return 4; }
   if (c=='-' && !word.empty()) { return 1; }
   if(0 < word.size()) { output.add(word); word.clear(); return 0; }
 }
@@ -317,6 +318,7 @@ unsigned Tokenizador::estado0_noDelim(const char& c, string& word, OutputIF& out
 }
 
 unsigned Tokenizador::estado1_delim(const char& c, string& word, OutputIF& output) const {
+  if(0 < word.size()) { output.add(word); word.clear(); }
   return 0;
 }
 
@@ -331,6 +333,7 @@ unsigned Tokenizador::estado2_delim(const char& c, string& word, OutputIF& outpu
     word.push_back(c);
     return 2;
   }
+  if(0 < word.size()) { output.add(word); word.clear(); }
   return 0;
 }
 
@@ -346,6 +349,7 @@ unsigned Tokenizador::estado3_delim(const char& c, string& word, OutputIF& outpu
     word.push_back(c);
     return 2;
   }
+  if(0 < word.size()) { output.add(word); word.clear(); }
   return 0;
 }
 
@@ -353,4 +357,14 @@ unsigned Tokenizador::estado3_noDelim(const char& c, string& word, OutputIF& out
   word.push_back(':');
   word.push_back(addChar[128 + (int) c]);
   return 2;
+}
+
+unsigned Tokenizador::estado4_delim(const char& c, string& word, OutputIF& output) const {
+  if(0 < word.size()) { output.add(word); word.clear(); }
+  return 0;
+}
+
+unsigned Tokenizador::estado4_noDelim(const char& c, string& word, OutputIF& output) const {
+  word.push_back('.'); word.push_back(addChar[128 + (int) c]);
+  return 0;
 }

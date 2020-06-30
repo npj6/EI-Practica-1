@@ -175,14 +175,16 @@
         &Tokenizador::estado0_delimNoCasosEspeciales,
         &Tokenizador::estado1_delim,
         &Tokenizador::estado2_delim,
-        &Tokenizador::estado3_delim
+        &Tokenizador::estado3_delim,
+        &Tokenizador::estado4_delim
       };
 
       vector<unsigned (Tokenizador::*)(const char &, string &, OutputIF &) const> funcionesNoDelim = {
         &Tokenizador::estado0_noDelimNoCasosEspeciales,
         &Tokenizador::estado1_noDelim,
         &Tokenizador::estado2_noDelim,
-        &Tokenizador::estado3_noDelim
+        &Tokenizador::estado3_noDelim,
+        &Tokenizador::estado4_noDelim
       };
 
 
@@ -200,6 +202,9 @@
 
       unsigned estado3_delim(const char& c, string& word, OutputIF& output) const;
       unsigned estado3_noDelim(const char& c, string& word, OutputIF& output) const;
+
+      unsigned estado4_delim(const char& c, string& word, OutputIF& output) const;
+      unsigned estado4_noDelim(const char& c, string& word, OutputIF& output) const;
 
 
       //pasar a minusc por array
