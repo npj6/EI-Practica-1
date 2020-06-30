@@ -89,12 +89,21 @@ unsigned Tokenizador::estado0_noDelimNoCasosEspeciales(const char& c, string& wo
 }
 
 unsigned Tokenizador::estado0_delim(const char& c, string& word, OutputIF& output) const {
-    if(0 < word.size()) { output.add(word); word.clear(); }
-    return 0;
+    if (c=='-' && !word.empty()) { return 1; }
+    if(0 < word.size()) { output.add(word); word.clear(); return 0; }
 }
 
 unsigned Tokenizador::estado0_noDelim(const char& c, string& word, OutputIF& output) const {
   word.push_back(addChar[128 + (int) c]);
+  return 0;
+}
+
+unsigned Tokenizador::estado1_delim(const char& c, string& word, OutputIF& output) const {
+  return 0;
+}
+
+unsigned Tokenizador::estado1_noDelim(const char& c, string& word, OutputIF& output) const {
+  word.push_back('-'); word.push_back(addChar[128 + (int) c]);
   return 0;
 }
 
@@ -242,11 +251,11 @@ string Tokenizador::DelimitadoresPalabra() const {
 void Tokenizador::CasosEspeciales(const bool& nuevoCasosEspeciales) {
   casosEspeciales = nuevoCasosEspeciales;
   if (casosEspeciales) {
-    funcionesDelim [0] = &Tokenizador::estado0_delimNoCasosEspeciales;
-    funcionesNoDelim[0] = &Tokenizador::estado0_noDelimNoCasosEspeciales;
-  } else {
     funcionesDelim [0] = &Tokenizador::estado0_delim;
     funcionesNoDelim[0] = &Tokenizador::estado0_noDelim;
+  } else {
+    funcionesDelim [0] = &Tokenizador::estado0_delimNoCasosEspeciales;
+    funcionesNoDelim[0] = &Tokenizador::estado0_noDelimNoCasosEspeciales;
   }
   comprobarDelimitadoresCasosEspeciales();
 }

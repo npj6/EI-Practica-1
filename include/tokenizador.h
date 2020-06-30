@@ -172,11 +172,13 @@
 
       //automata de estados
       vector<unsigned (Tokenizador::*)(const char &, string &, OutputIF &) const> funcionesDelim = {
-        &Tokenizador::estado0_delimNoCasosEspeciales
+        &Tokenizador::estado0_delimNoCasosEspeciales,
+        &Tokenizador::estado1_delim
       };
 
       vector<unsigned (Tokenizador::*)(const char &, string &, OutputIF &) const> funcionesNoDelim = {
-        &Tokenizador::estado0_noDelimNoCasosEspeciales
+        &Tokenizador::estado0_noDelimNoCasosEspeciales,
+        &Tokenizador::estado1_noDelim
       };
 
 
@@ -185,11 +187,10 @@
 
       unsigned estado0_delim(const char& c, string& word, OutputIF& output) const;
       unsigned estado0_noDelim(const char& c, string& word, OutputIF& output) const;
-      /*ejemplos puntero a funcion
-      void (Tokenizador::*addCharToWord) (string&, const char&) const;
-      void addCharToWordBasic(string &word, const char &c) const;
-      void addCharToWordAccentsLower(string &word, const char &c) const;
-      */
+
+      unsigned estado1_delim(const char& c, string& word, OutputIF& output) const;
+      unsigned estado1_noDelim(const char& c, string& word, OutputIF& output) const;
+
 
       //pasar a minusc por array
       char conversion[256];
