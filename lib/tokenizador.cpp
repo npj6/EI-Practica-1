@@ -314,6 +314,9 @@ unsigned Tokenizador::estado0_delim(const char& c, string& word, OutputIF& outpu
 
 unsigned Tokenizador::estado0_noDelim(const char& c, string& word, OutputIF& output) const {
   word.push_back(addChar[128 + (int) c]);
+  if (c==':' && (word == "http:" || word == "https:" || word == "ftp:")) {
+    return 3;
+  }
   return 0;
 }
 
@@ -345,7 +348,7 @@ unsigned Tokenizador::estado2_noDelim(const char& c, string& word, OutputIF& out
 unsigned Tokenizador::estado3_delim(const char& c, string& word, OutputIF& output) const {
   string URLignoredDelims = "_:/.?&-=#@";
   if (URLignoredDelims.find(c) != -1) {
-    word.push_back(':');
+    if(word[word.size()-1] != ':') word.push_back(':'); //el if para no poner doble si no es delim
     word.push_back(c);
     return 2;
   }
@@ -354,7 +357,7 @@ unsigned Tokenizador::estado3_delim(const char& c, string& word, OutputIF& outpu
 }
 
 unsigned Tokenizador::estado3_noDelim(const char& c, string& word, OutputIF& output) const {
-  word.push_back(':');
+  if(word[word.size()-1] != ':') word.push_back(':'); //el if para no poner doble si no es delim
   word.push_back(addChar[128 + (int) c]);
   return 2;
 }

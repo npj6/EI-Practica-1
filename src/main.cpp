@@ -22,10 +22,10 @@ main(void)
 
 list<string> lt1, lt2, lt3, lt4;
 
-Tokenizador p("/.;-", kCasosEspeciales, kpasarAminusculas );
+Tokenizador p("/.;-:", kCasosEspeciales, kpasarAminusculas );
 cout << p << endl;
 p.test();
-p.Tokenizar("MS DOS OS 2 high low", lt1);
+p.Tokenizar("MS-DOS OS 2 high low http://www.twitter.com/", lt1);
 imprimirListaSTL(lt1);
 
 p.CasosEspeciales (false);
