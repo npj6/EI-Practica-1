@@ -219,6 +219,7 @@
       unsigned estado4_noDelim(const char& c, string& word, OutputIF& output);
 
       string prefijoNum = ""; string especulativoNum = ""; bool activoNum = false;
+      string especulativoSimb = ""; unsigned estadoSimb = 0;
 
       unsigned estado5_delim(const char& c, string& word, OutputIF& output);
       unsigned estado5_noDelim(const char& c, string& word, OutputIF& output);

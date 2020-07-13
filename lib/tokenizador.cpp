@@ -95,6 +95,12 @@ void Tokenizador::Tokenizar(const string& str, OutputIF& output) {
   }
 
   //añade la ultima palabra
+  if(!especulativoSimb.empty()) {
+    char c2 = ' ';
+    (this->*funcionesDelim[estadoSimb])(c2, word, output);
+    output.add(especulativoSimb);
+    especulativoSimb.clear();
+  }
   if(!word.empty() || !especulativoNum.empty()) {
     if (!especulativoNum.empty()) {
       if(!word.empty()) { word.push_back(','); }
@@ -311,6 +317,13 @@ unsigned Tokenizador::estado0_noDelimNoCasosEspeciales(const char& c, string& wo
 }
 
 unsigned Tokenizador::estado0_delim(const char& c, string& word, OutputIF& output) {
+  //hack para hacer funcionar $%
+  if(!especulativoSimb.empty()) {
+    char c2 = ' ';
+    (this->*funcionesDelim[estadoSimb])(c2, word, output);
+    output.add(especulativoSimb);
+    especulativoSimb.clear();
+  }
   if (c==':' && (word == "http" || word == "https" || word == "ftp")) {
     return 3;
   }
@@ -323,6 +336,11 @@ unsigned Tokenizador::estado0_delim(const char& c, string& word, OutputIF& outpu
   return 0;
 }
 unsigned Tokenizador::estado0_noDelim(const char& c, string& word, OutputIF& output) {
+  //hack para hacer funcionar $%
+  if(!especulativoSimb.empty()) {
+    (this->*funcionesNoDelim[estadoSimb])(especulativoSimb[0], word, output);
+    especulativoSimb.clear();
+  }
   bool num = '0' <= c && c <= '9';
   if(num && word.empty()) { activoNum = true; }
   word.push_back(addChar[128 + (int) c]);
@@ -388,9 +406,22 @@ unsigned Tokenizador::estado5_delim(const char& c, string& word, OutputIF& outpu
   if(c=='.') { return 6; }
   if(c==',') { return 7; }
   activoNum = false;
+  if(!especulativoSimb.empty()) {
+    if(!word.empty()) { output.add(word); word.clear(); return 0; }
+    return 0; //evita bucle infinito
+  }
   return estado0_delim(c, word, output);
 }
 unsigned Tokenizador::estado5_noDelim(const char& c, string& word, OutputIF& output) {
+    if((c=='$' || c=='%') && especulativoSimb.empty()) {
+      especulativoSimb.push_back(c);
+      estadoSimb = 5;
+      return 0;
+    }
+    if(!especulativoSimb.empty()) {
+      word.push_back(c);
+      return 0; //evita bucle infinito
+    }
     return estado0_noDelim(c, word, output);
     /*
       reutiliza el codigo de 0
@@ -477,6 +508,10 @@ unsigned Tokenizador::estado8_noDelim(const char& c, string& word, OutputIF& out
   if('0' <= c && c <= '9') {
     word.push_back(addChar[128 + (int) c]);
     return 8;
+  } else if((c=='$' || c=='%') && especulativoSimb.empty()) {
+    especulativoSimb.push_back(c);
+    estadoSimb = 8;
+    return 0;
   } else {
     //acronimo
     word.push_back(addChar[128 + (int) c]);
@@ -505,6 +540,10 @@ unsigned Tokenizador::estado9_noDelim(const char& c, string& word, OutputIF& out
   if('0' <= c && c <= '9') {
     especulativoNum.push_back(addChar[128 + (int) c]);
     return 9;
+  } else if((c=='$' || c=='%') && especulativoSimb.empty()) {
+    especulativoSimb.push_back(c);
+    estadoSimb = 9;
+    return 0;
   } else {
     //numero
     if(!word.empty()) { output.add(prefijoNum+word); word.clear(); }
