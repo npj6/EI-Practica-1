@@ -171,40 +171,72 @@
 
 
       //automata de estados
-      vector<unsigned (Tokenizador::*)(const char &, string &, OutputIF &) const> funcionesDelim = {
+      vector<unsigned (Tokenizador::*)(const char &, string &, OutputIF &) > funcionesDelim = {
         &Tokenizador::estado0_delimNoCasosEspeciales,
         &Tokenizador::estado1_delim,
         &Tokenizador::estado2_delim,
         &Tokenizador::estado3_delim,
-        &Tokenizador::estado4_delim
+        &Tokenizador::estado4_delim,
+        &Tokenizador::estado5_delim,
+        &Tokenizador::estado6_delim,
+        &Tokenizador::estado7_delim,
+        &Tokenizador::estado8_delim,
+        &Tokenizador::estado9_delim,
+        &Tokenizador::estado10_delim
       };
 
-      vector<unsigned (Tokenizador::*)(const char &, string &, OutputIF &) const> funcionesNoDelim = {
+      vector<unsigned (Tokenizador::*)(const char &, string &, OutputIF &) > funcionesNoDelim = {
         &Tokenizador::estado0_noDelimNoCasosEspeciales,
         &Tokenizador::estado1_noDelim,
         &Tokenizador::estado2_noDelim,
         &Tokenizador::estado3_noDelim,
-        &Tokenizador::estado4_noDelim
+        &Tokenizador::estado4_noDelim,
+        &Tokenizador::estado5_noDelim,
+        &Tokenizador::estado6_noDelim,
+        &Tokenizador::estado7_noDelim,
+        &Tokenizador::estado8_noDelim,
+        &Tokenizador::estado9_noDelim,
+        &Tokenizador::estado10_noDelim
       };
 
 
-      unsigned estado0_delimNoCasosEspeciales(const char& c, string& word, OutputIF& output) const;
-      unsigned estado0_noDelimNoCasosEspeciales(const char& c, string& word, OutputIF& output) const;
+      unsigned estado0_delimNoCasosEspeciales(const char& c, string& word, OutputIF& output);
+      unsigned estado0_noDelimNoCasosEspeciales(const char& c, string& word, OutputIF& output);
 
-      unsigned estado0_delim(const char& c, string& word, OutputIF& output) const;
-      unsigned estado0_noDelim(const char& c, string& word, OutputIF& output) const;
+      unsigned estado0_delim(const char& c, string& word, OutputIF& output);
+      unsigned estado0_noDelim(const char& c, string& word, OutputIF& output);
 
-      unsigned estado1_delim(const char& c, string& word, OutputIF& output) const;
-      unsigned estado1_noDelim(const char& c, string& word, OutputIF& output) const;
+      unsigned estado1_delim(const char& c, string& word, OutputIF& output);
+      unsigned estado1_noDelim(const char& c, string& word, OutputIF& output);
 
-      unsigned estado2_delim(const char& c, string& word, OutputIF& output) const;
-      unsigned estado2_noDelim(const char& c, string& word, OutputIF& output) const;
+      unsigned estado2_noDelim(const char& c, string& word, OutputIF& output);
+      unsigned estado2_delim(const char& c, string& word, OutputIF& output);
 
-      unsigned estado3_delim(const char& c, string& word, OutputIF& output) const;
-      unsigned estado3_noDelim(const char& c, string& word, OutputIF& output) const;
+      unsigned estado3_delim(const char& c, string& word, OutputIF& output);
+      unsigned estado3_noDelim(const char& c, string& word, OutputIF& output);
 
-      unsigned estado4_delim(const char& c, string& word, OutputIF& output) const;
-      unsigned estado4_noDelim(const char& c, string& word, OutputIF& output) const;
+      unsigned estado4_delim(const char& c, string& word, OutputIF& output);
+      unsigned estado4_noDelim(const char& c, string& word, OutputIF& output);
+
+      string prefijoNum = ""; string especulativoNum = ""; bool activoNum = false;
+
+      unsigned estado5_delim(const char& c, string& word, OutputIF& output);
+      unsigned estado5_noDelim(const char& c, string& word, OutputIF& output);
+
+      unsigned estado6_delim(const char& c, string& word, OutputIF& output);
+      unsigned estado6_noDelim(const char& c, string& word, OutputIF& output);
+
+      unsigned estado7_delim(const char& c, string& word, OutputIF& output);
+      unsigned estado7_noDelim(const char& c, string& word, OutputIF& output);
+
+      unsigned estado8_delim(const char& c, string& word, OutputIF& output);
+      unsigned estado8_noDelim(const char& c, string& word, OutputIF& output);
+
+      unsigned estado9_delim(const char& c, string& word, OutputIF& output);
+      unsigned estado9_noDelim(const char& c, string& word, OutputIF& output);
+
+      unsigned estado10_delim(const char& c, string& word, OutputIF& output);
+      unsigned estado10_noDelim(const char& c, string& word, OutputIF& output);
 
 
       //pasar a minusc por array

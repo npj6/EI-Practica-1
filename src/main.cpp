@@ -5,6 +5,8 @@
 
 using namespace std;
 
+///////// Comprobaci�n de que vac�e la lista resultado
+
 void imprimirListaSTL(const list<string>& cadena)
 {
         list<string>::const_iterator itCadena;
@@ -20,33 +22,35 @@ main(void)
 {
 	bool kCasosEspeciales = true, kpasarAminusculas = false;
 
-list<string> lt1, lt2, lt3, lt4;
+	list<string> lt1, lt2;
 
-Tokenizador p("/.;-:", kCasosEspeciales, kpasarAminusculas );
-cout << p << endl;
-p.test();
-p.Tokenizar("MS-DOS OS 2 high low http://www.twitter.com/", lt1);
-imprimirListaSTL(lt1);
+Tokenizador a("-#", true, false);
+list<string> tokens;
 
-p.CasosEspeciales (false);
-p.test();
-p.Tokenizar("MS DOS OS 2 high low", lt1);
-imprimirListaSTL(lt1);
+a.DelimitadoresPalabra("@.,&");
+a.Tokenizar("pal1 10.000,34 10,000.34 10.000.123.456.789.009,34 10,000,123,456,789,009.34 20.03 40,03 2005 10. 20, 10.0 20,0 La 20,12.456,7.8.9,", tokens);
+	imprimirListaSTL(tokens);
+
+a.Tokenizar(".34 ,56", tokens);
+	imprimirListaSTL(tokens);
+
+a.Tokenizar("pal1 10.00a 10.000.a.000 10/12/85 1,23E+10", tokens);
+	imprimirListaSTL(tokens);
+
+a.Tokenizar("pal1&10.00@10.000&aaa@10/12/85", tokens);
+	imprimirListaSTL(tokens);
+
+a.Tokenizar(".34@@&,56", tokens);
+	imprimirListaSTL(tokens);
 
 
-Tokenizador a(" ", kCasosEspeciales, kpasarAminusculas );
-a.Tokenizar("MS DOS OS 2 high low", lt1);
-imprimirListaSTL(lt1);
+a.PasarAminuscSinAcentos(true);
+a.Tokenizar("Pal1&10.00@10.000&aaa@10/12/85 La", tokens);
+	imprimirListaSTL(tokens);
 
-Tokenizador b(" ", kCasosEspeciales, kpasarAminusculas  );
-b.Tokenizar("M", lt2);
-imprimirListaSTL(lt2);
+a.CasosEspeciales (false);
+a.Tokenizar("Pal1&10.00@10.000&000@10/12/85 La", tokens);
+	imprimirListaSTL(tokens);
 
-Tokenizador c(" ", kCasosEspeciales, kpasarAminusculas  );
-c.Tokenizar(" ", lt3);
-imprimirListaSTL(lt3);
 
-Tokenizador d(" ", kCasosEspeciales, kpasarAminusculas  );
-d.Tokenizar("", lt4);
-imprimirListaSTL(lt4);
 }

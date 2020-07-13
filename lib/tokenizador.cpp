@@ -85,16 +85,24 @@ void Tokenizador::Tokenizar(const string& str, OutputIF& output) {
     esDelim = false;
     for(unsigned d=0; d<idx.size(); d++) { if (idxDelims[idx[d]]==c) { esDelim = true; encontradoDelimitador(d); break; } }
 
+    //std::cout << "de estado " << estado;
     if(esDelim) {
       estado = (this->*funcionesDelim[estado])(c, word, output);
     } else {
       estado = (this->*funcionesNoDelim[estado])(c, word, output);
     }
+    //std::cout << " a estado " << estado << " con el caracter " << c << endl;
   }
 
   //añade la ultima palabra
-  if(0 < word.size()) {
-    output.add(word);
+  if(!word.empty() || !especulativoNum.empty()) {
+    if (!especulativoNum.empty()) {
+      if(!word.empty()) { word.push_back(','); }
+      word += especulativoNum;
+      especulativoNum.clear();
+    }
+    output.add(prefijoNum+word);
+    prefijoNum.clear();
   }
 }
 
@@ -293,81 +301,233 @@ void Tokenizador::normalizarDelimitadores(string& delims){
 }
 
 
-unsigned Tokenizador::estado0_delimNoCasosEspeciales(const char& c, string& word, OutputIF& output) const {
-    if(0 < word.size()) { output.add(word); word.clear(); }
+unsigned Tokenizador::estado0_delimNoCasosEspeciales(const char& c, string& word, OutputIF& output) {
+    if(!word.empty()) { output.add(word); word.clear(); }
     return 0;
 }
-
-unsigned Tokenizador::estado0_noDelimNoCasosEspeciales(const char& c, string& word, OutputIF& output) const {
+unsigned Tokenizador::estado0_noDelimNoCasosEspeciales(const char& c, string& word, OutputIF& output) {
   word.push_back(addChar[128 + (int) c]);
   return 0;
 }
 
-unsigned Tokenizador::estado0_delim(const char& c, string& word, OutputIF& output) const {
+unsigned Tokenizador::estado0_delim(const char& c, string& word, OutputIF& output) {
   if (c==':' && (word == "http" || word == "https" || word == "ftp")) {
     return 3;
   }
-  if (c=='.' && !word.empty()) { return 4; }
+  if (c=='.') {
+    if(word.empty()) { prefijoNum = "0."; return 6; } else { return 4; }
+  }
+  if (c==',' && word.empty()) { prefijoNum = "0,"; return 7; }
   if (c=='-' && !word.empty()) { return 1; }
-  if(0 < word.size()) { output.add(word); word.clear(); return 0; }
+  if(!word.empty()) { output.add(word); word.clear(); return 0; }
+  return 0;
 }
-
-unsigned Tokenizador::estado0_noDelim(const char& c, string& word, OutputIF& output) const {
+unsigned Tokenizador::estado0_noDelim(const char& c, string& word, OutputIF& output) {
+  bool num = '0' <= c && c <= '9';
+  if(num && word.empty()) { activoNum = true; }
   word.push_back(addChar[128 + (int) c]);
+  if(!num) { activoNum = false; }
   if (c==':' && (word == "http:" || word == "https:" || word == "ftp:")) {
     return 3;
+  }
+  if (num && activoNum) {
+    return 5;
   }
   return 0;
 }
 
-unsigned Tokenizador::estado1_delim(const char& c, string& word, OutputIF& output) const {
-  if(0 < word.size()) { output.add(word); word.clear(); }
+unsigned Tokenizador::estado1_delim(const char& c, string& word, OutputIF& output) {
+  if(!word.empty()) { output.add(word); word.clear(); }
   return 0;
 }
-
-unsigned Tokenizador::estado1_noDelim(const char& c, string& word, OutputIF& output) const {
+unsigned Tokenizador::estado1_noDelim(const char& c, string& word, OutputIF& output) {
   word.push_back('-'); word.push_back(addChar[128 + (int) c]);
   return 0;
 }
 
-unsigned Tokenizador::estado2_delim(const char& c, string& word, OutputIF& output) const {
+unsigned Tokenizador::estado2_delim(const char& c, string& word, OutputIF& output) {
   string URLignoredDelims = "_:/.?&-=#@";
   if (URLignoredDelims.find(c) != -1) {
-    word.push_back(c);
+    word.push_back(addChar[128 + (int) c]);
     return 2;
   }
-  if(0 < word.size()) { output.add(word); word.clear(); }
+  if(!word.empty()) { output.add(word); word.clear(); }
   return 0;
 }
-
-unsigned Tokenizador::estado2_noDelim(const char& c, string& word, OutputIF& output) const {
+unsigned Tokenizador::estado2_noDelim(const char& c, string& word, OutputIF& output) {
   word.push_back(addChar[128 + (int) c]);
   return 2;
 }
 
-unsigned Tokenizador::estado3_delim(const char& c, string& word, OutputIF& output) const {
+unsigned Tokenizador::estado3_delim(const char& c, string& word, OutputIF& output) {
   string URLignoredDelims = "_:/.?&-=#@";
   if (URLignoredDelims.find(c) != -1) {
     if(word[word.size()-1] != ':') word.push_back(':'); //el if para no poner doble si no es delim
-    word.push_back(c);
+    word.push_back(addChar[128 + (int) c]);
     return 2;
   }
-  if(0 < word.size()) { output.add(word); word.clear(); }
+  if(!word.empty()) { output.add(word); word.clear(); }
   return 0;
 }
-
-unsigned Tokenizador::estado3_noDelim(const char& c, string& word, OutputIF& output) const {
+unsigned Tokenizador::estado3_noDelim(const char& c, string& word, OutputIF& output) {
   if(word[word.size()-1] != ':') word.push_back(':'); //el if para no poner doble si no es delim
   word.push_back(addChar[128 + (int) c]);
   return 2;
 }
 
-unsigned Tokenizador::estado4_delim(const char& c, string& word, OutputIF& output) const {
-  if(0 < word.size()) { output.add(word); word.clear(); }
+unsigned Tokenizador::estado4_delim(const char& c, string& word, OutputIF& output) {
+  if(!word.empty()) { output.add(word); word.clear(); }
+  return 0;
+}
+unsigned Tokenizador::estado4_noDelim(const char& c, string& word, OutputIF& output) {
+  word.push_back('.'); word.push_back(addChar[128 + (int) c]);
   return 0;
 }
 
-unsigned Tokenizador::estado4_noDelim(const char& c, string& word, OutputIF& output) const {
-  word.push_back('.'); word.push_back(addChar[128 + (int) c]);
-  return 0;
+unsigned Tokenizador::estado5_delim(const char& c, string& word, OutputIF& output) {
+  if(c=='.') { return 6; }
+  if(c==',') { return 7; }
+  activoNum = false;
+  return estado0_delim(c, word, output);
+}
+unsigned Tokenizador::estado5_noDelim(const char& c, string& word, OutputIF& output) {
+    return estado0_noDelim(c, word, output);
+    /*
+      reutiliza el codigo de 0
+      si hay un numero, el estado vuelve a 5
+      si no, se hace lo que haría el estado 0
+    */
+}
+
+unsigned Tokenizador::estado6_delim(const char& c, string& word, OutputIF& output) {
+  //numero
+  if(!word.empty()) { output.add(prefijoNum+word); word.clear(); }
+  prefijoNum.clear();
+  activoNum = false;
+  return estado0_delim(c, word, output); //2..3 tiene que leer desde 0 el segundo .
+}
+unsigned Tokenizador::estado6_noDelim(const char& c, string& word, OutputIF& output) {
+  if ('0' <= c && c <= '9') {
+    if (!word.empty()) { word.push_back('.'); }
+    word.push_back(addChar[128 + (int) c]);
+    return 8;
+  } else if (word.empty()) {
+    //acronimo empieza por .
+    word.push_back(addChar[128 + (int) c]);
+    prefijoNum.clear();
+    activoNum = false;
+    return 0;
+  } else {
+    //acronimo
+    word.push_back('.');
+    word.push_back(addChar[128 + (int) c]);
+    prefijoNum.clear();
+    activoNum = false;
+    return 0;
+  }
+}
+
+unsigned Tokenizador::estado7_delim(const char& c, string& word, OutputIF& output) {
+  //acepta especulacion
+  if(!especulativoNum.empty()) {
+      if(!word.empty()) { word.push_back(','); }
+      word += especulativoNum;
+      especulativoNum.clear();
+    }
+  //numero
+  if(!word.empty()) { output.add(prefijoNum+word); word.clear(); }
+  prefijoNum.clear();
+  activoNum = false;
+  return estado0_delim(c, word, output); //,2..3 tiene que leer desde 0 el segundo .
+}
+unsigned Tokenizador::estado7_noDelim(const char& c, string& word, OutputIF& output) {
+  if ('0' <= c && c <= '9') {
+    //acepta especulacion
+    if(!especulativoNum.empty()) {
+      if(!word.empty()) { word.push_back(','); }
+      word += especulativoNum;
+      especulativoNum.clear();
+    }
+    //inicia especulacion
+    especulativoNum.push_back(addChar[128 + (int) c]);
+    return 9;
+  } else {
+    //numero
+    if(!word.empty()) { output.add(prefijoNum+word); word.clear(); }
+    prefijoNum.clear();
+    //acronimo
+    word = especulativoNum;
+    word.push_back(addChar[128 + (int) c]);
+    especulativoNum.clear();
+    activoNum = false;
+    return 0;
+  }
+}
+
+unsigned Tokenizador::estado8_delim(const char& c, string& word, OutputIF& output) {
+  if(c=='.') { return 6; }
+  if(c==',') { return 7; }
+  //numero
+  if(!word.empty()) { output.add(prefijoNum+word); word.clear(); }
+  prefijoNum.clear();
+  activoNum = false;
+  return 0; //8@2? no usa estado0
+}
+unsigned Tokenizador::estado8_noDelim(const char& c, string& word, OutputIF& output) {
+  if('0' <= c && c <= '9') {
+    word.push_back(addChar[128 + (int) c]);
+    return 8;
+  } else {
+    //acronimo
+    word.push_back(addChar[128 + (int) c]);
+    prefijoNum.clear();
+    activoNum = false;
+    return 0;
+  }
+}
+
+unsigned Tokenizador::estado9_delim(const char& c, string& word, OutputIF& output) {
+  if(c=='.') { return 10; }
+  if(c==',') { return 7; }
+  //acepta especulacion
+  if(!especulativoNum.empty()) {
+    if(!word.empty()) { word.push_back(','); }
+    word += especulativoNum;
+    especulativoNum.clear();
+  }
+  //numero
+  if(!word.empty()) { output.add(prefijoNum+word); word.clear(); }
+  prefijoNum.clear();
+  activoNum = false;
+  return 0; //,2@3? no usa estado0
+}
+unsigned Tokenizador::estado9_noDelim(const char& c, string& word, OutputIF& output) {
+  if('0' <= c && c <= '9') {
+    especulativoNum.push_back(addChar[128 + (int) c]);
+    return 9;
+  } else {
+    //numero
+    if(!word.empty()) { output.add(prefijoNum+word); word.clear(); }
+    prefijoNum.clear();
+    //acronimo
+    word = especulativoNum;
+    word.push_back(addChar[128 + (int) c]);
+    especulativoNum.clear();
+    activoNum = false;
+    return 0;
+  }
+}
+
+unsigned Tokenizador::estado10_delim(const char& c, string& word, OutputIF& output) {
+  return estado7_delim(c, word, output);
+}
+unsigned Tokenizador::estado10_noDelim(const char& c, string& word, OutputIF& output) {
+  if ('0' <= c && c <= '9') {
+    especulativoNum.push_back('.');
+    especulativoNum.push_back(addChar[128 + (int) c]);
+    return 9;
+  } else {
+    especulativoNum.push_back('.');
+    return estado7_noDelim(c, word, output);
+  }
 }
