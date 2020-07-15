@@ -77,6 +77,16 @@ void Tokenizador::rellenarConversion(void) {
   }
 }
 
+void Tokenizador::encontradoDelimitador(unsigned pos) {
+  idxCount[idx[pos]]++;
+  while(pos != 0 && idxCount[idx[pos-1]] < idxCount[idx[pos]]) {
+    unsigned i = idx[pos];
+    idx[pos] = idx[pos-1];
+    pos--;
+    idx[pos] = i;
+  }
+}
+
 //string to output
 void Tokenizador::Tokenizar(const string& str, OutputIF& output) {
   string word; bool esDelim; unsigned estado = 0;
@@ -85,13 +95,11 @@ void Tokenizador::Tokenizar(const string& str, OutputIF& output) {
     esDelim = false;
     for(unsigned d=0; d<idx.size(); d++) { if (idxDelims[idx[d]]==c) { esDelim = true; encontradoDelimitador(d); break; } }
 
-    //std::cout << "de estado " << estado;
     if(esDelim) {
       estado = (this->*funcionesDelim[estado])(c, word, output);
     } else {
       estado = (this->*funcionesNoDelim[estado])(c, word, output);
     }
-    //std::cout << " a estado " << estado << " con el caracter " << c << endl;
   }
 
   //añade la ultima palabra

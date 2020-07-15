@@ -45,17 +45,6 @@
        * el campo delimiters se imprimira con el string con el que se inicializo el tokenizador
        */
     public:
-      void test (void) const {
-        cout << "\"";
-        for(const unsigned& c : idx) {
-          cout << idxDelims[c];
-        }
-        cout << "\"" << endl;
-        for(const unsigned& c: idx) {
-          cout << idxCount[c] << " ";
-        }
-        cout << endl;
-      }
 
       Tokenizador(const string& delimitadoresPalabra, const bool& kcasosEspeciales, const bool& minuscSinAcentos);
       /* Inicializa delimiters a delimitadoresPalabra filtrando que no se introduzcan delimitadores
@@ -254,15 +243,7 @@
       vector<unsigned> idx;
       vector<float> idxCount;
 
-      void encontradoDelimitador(unsigned pos) {
-        idxCount[idx[pos]]++;
-        while(pos != 0 && idxCount[idx[pos-1]] < idxCount[idx[pos]]) {
-          unsigned i = idx[pos];
-          idx[pos] = idx[pos-1];
-          pos--;
-          idx[pos] = i;
-        }
-      }
+      void encontradoDelimitador(unsigned pos);
   };
 
 #endif
